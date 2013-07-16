@@ -1,3 +1,3 @@
 require('coffee-script');
-require('src/api');
+require('./src/api');
 

@@ -9,13 +9,13 @@ File   = require './file'
 
 module.exports =
   ###
-  Generates an object with ordered list of files to add
-  partitioned into execution domains (client / server / shared).
+  Generates an object with ordered list of files for the
+  recursive tree below the given path.
 
   @param dir: The root directory to retrieve the file listing from.
 
   ###
-  files: (dir) ->
+  tree: (dir) ->
     # Setup initial conditions.
     dir   = fsPath.resolve(dir)
     paths = wrench.readdirSyncRecursive(dir)

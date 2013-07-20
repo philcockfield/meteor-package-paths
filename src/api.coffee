@@ -21,8 +21,15 @@ module.exports =
   directory: (dir) -> toOrderedFiles(readdir(dir, false))
 
 
-
-
+  ###
+  Gets the [File] object for the given path.
+  @param path: The path to the file to load.
+  ###
+  file: (path) ->
+    # Setup initial conditions.
+    return unless fs.existsSync(path)
+    return unless fs.statSync(path).isFile()
+    new File(path)
 
 
 

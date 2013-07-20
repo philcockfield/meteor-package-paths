@@ -7,33 +7,29 @@ api     = require('./api')
 
 
 print = (files) ->
-  for key, value of files
-    console.log "#{ key }:".blue
-    for file in value
-      console.log ' File'.cyan, file.path
-      # console.log '   - dir:'.cyan, file.dir
-    console.log ''
-
+  for key, items of files
+    if items.length > 0
+      console.log " #{ key }:".blue
+      for file in items
+        console.log '  File'.cyan, file.path
+      console.log ''
 
 
 program
   .command('tree')
-  .description('Shows the ordered list of files for the entire hierarchy under the given directory')
+  .description('Shows the ordered list of files for the entire hierarchy under the given directory (deep)')
   .action (dir, args) ->
-    # Retreive the set of files.
-    files = api.tree(dir)
-    print(files)
+    console.log ''
+    console.log 'Tree:'.red, dir
+    print(api.tree(dir))
 
-
-    # temp = (file) ->
-    #   console.log '------'.cyan
-
-    #   console.log 'file'.red, file
-    #   # console.log 'file.prereqs()'.red, file.prereqs()
-    #   console.log 'file.directives()'.red, file.directives()
-    #   console.log ''
-
-    # temp files.client[0]
+program
+  .command('directory')
+  .description('Shows the ordered list of files under the given directory (shallow)')
+  .action (dir, args) ->
+    console.log ''
+    console.log 'Directory:'.red, dir
+    print(api.directory(dir))
 
 
 
@@ -44,4 +40,17 @@ program.parse process.argv
 
 
 # --------------------------------------------------------------------------
+
+
+
+# temp = (file) ->
+#   console.log '------'.cyan
+
+#   console.log 'file'.red, file
+#   # console.log 'file.prereqs()'.red, file.prereqs()
+#   console.log 'file.directives()'.red, file.directives()
+#   console.log ''
+
+# temp files.client[0]
+
 

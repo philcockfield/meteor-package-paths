@@ -9,43 +9,66 @@ File   = require './file'
 
 module.exports =
   ###
-  Generates an object with ordered list of files for the
-  recursive tree below the given path.
-
+  Generates the ordered list of files for the entire hierarchy under the given directory (deep).
   @param dir: The root directory to retrieve the file listing from.
+  ###
+  tree: (dir) -> toOrderedFiles(readdir(dir, true))
 
   ###
-  tree: (dir) ->
-    # Setup initial conditions.
-    dir   = fsPath.resolve(dir)
-    paths = wrench.readdirSyncRecursive(dir)
-    paths = paths.filter (path) -> not fsPath.extname(path).isBlank() # Remove folder-only paths.
-    paths = paths.map (path) -> "#{ dir }/#{ path }"
-    files = paths.map (path) -> new File(path)
-
-    # Partition paths into their execution domains.
-    byDomain = (domain) -> files.filter (file) -> file.domain is domain
-    result =
-      client: byDomain('client')
-      server: byDomain('server')
-      shared: byDomain('shared')
-
-    # Process paths.
-    process = (files) ->
-      files = sortDeepest(files)
-      files = withPrereqs(files)
-      files
-
-    for key, files of result
-      result[key] = process(files)
+  Generates the ordered list of files under the given directory (shallow).
+  @param dir: The root directory to retrieve the file listing from.
+  ###
+  directory: (dir) -> toOrderedFiles(readdir(dir, false))
 
 
-    # Finish up.
-    result
+
+
 
 
 
 # PRIVATE --------------------------------------------------------------------------
+
+
+
+
+readdir = (dir, deep) ->
+  dir = fsPath.resolve(dir)
+  if deep
+    paths = wrench.readdirSyncRecursive(dir)
+  else
+    paths = fs.readdirSync(dir)
+  paths = paths.map (path) -> "#{ dir }/#{ path }"
+  paths
+
+
+
+
+
+toOrderedFiles = (paths) ->
+  paths = paths.filter (path) -> not fsPath.extname(path).isBlank() # Remove folder-only paths.
+  files = paths.map (path) -> new File(path)
+
+  # Partition paths into their execution domains.
+  byDomain = (domain) -> files.filter (file) -> file.domain is domain
+  result =
+    client: byDomain('client')
+    server: byDomain('server')
+    shared: byDomain('shared')
+
+  # Process paths.
+  process = (files) ->
+    files = sortDeepest(files)
+    files = withPrereqs(files)
+    files
+
+  for key, files of result
+    result[key] = process(files)
+
+
+  # Finish up.
+  result
+
+
 
 
 

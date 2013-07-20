@@ -49,7 +49,8 @@ program
 
       console.log ''
       console.log '- prereqs:'.cyan
-      console.log file.prereqs().map (d) -> d.toString()
+      file.buildPrereqs()
+      console.log file.prereqs.map (d) -> d.toString()
     else
       console.log ' Not found.'.red
     console.log ''

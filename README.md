@@ -8,5 +8,5 @@ Provides sprockets style loading of files for a Meteor package.
     $ bin/command.js --help
 
     # For example:
-    $ bin/command.js paths ./test/sample
+    $ bin/command.js files ./test/sample
 

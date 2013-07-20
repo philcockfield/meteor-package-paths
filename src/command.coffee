@@ -7,14 +7,14 @@ api     = require('./api')
 
 
 program
-  .command('paths')
-  .description('Shows the packages paths to add for the given folder')
+  .command('files')
+  .description('Shows the packages ordered list of files')
   .action (dir, args) ->
-    # Retreive the paths.
-    paths = api.paths(dir)
+    # Retreive the set of files.
+    files = api.files(dir)
 
     # Print results to the console.
-    for key, value of paths
+    for key, value of files
       console.log "#{ key }:".blue
       for file in value
         console.log ' File'.cyan, file.path
@@ -29,11 +29,8 @@ program
       console.log 'file.directives()'.red, file.directives()
       console.log ''
 
-    temp paths.client[0]
-    # temp paths.client[1]
+    temp files.client[0]
 
-    # Finish up.
-    paths
 
 
 

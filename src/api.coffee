@@ -15,7 +15,7 @@ module.exports =
   @param dir: The root directory to retrieve the file listing from.
 
   ###
-  paths: (dir) ->
+  files: (dir) ->
     # Setup initial conditions.
     dir   = fsPath.resolve(dir)
     paths = wrench.readdirSyncRecursive(dir)
@@ -24,19 +24,20 @@ module.exports =
     files = paths.map (path) -> new File(path)
 
     # Partition paths into their execution domains.
-    byDomain = (domain) -> result = files.filter (file) -> file.domain is domain
+    byDomain = (domain) -> files.filter (file) -> file.domain is domain
     result =
       client: byDomain('client')
       server: byDomain('server')
       shared: byDomain('shared')
 
     # Process paths.
-    process = (domain, files) ->
+    process = (files) ->
       files = sortDeepest(files)
+      files = withPrereqs(files)
       files
 
     for key, files of result
-      result[key] = process(key, files)
+      result[key] = process(files)
 
 
     # Finish up.
@@ -58,8 +59,7 @@ sortDeepest = (files) ->
   # Convert to array.
   folders = []
   for key, value of byFolder
-    item = { dir:key, files:value }
-    folders.push(item)
+    folders.push({ dir:key, files:value })
 
   # Sort by depth.
   fnSort = (item) -> item.dir.split('/').length
@@ -74,5 +74,13 @@ sortDeepest = (files) ->
 
   # Finish up.
   result
+
+
+
+withPrereqs = (files) -> files
+
+
+
+
 
 

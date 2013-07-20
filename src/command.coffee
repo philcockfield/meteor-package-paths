@@ -16,9 +16,21 @@ program
     # Print results to the console.
     for key, value of paths
       console.log "#{ key }:".blue
-      for path in value
-        console.log ' ', path
+      for file in value
+        console.log ' File'.cyan, file.path
+        # console.log '   - dir:'.cyan, file.dir
       console.log ''
+
+    temp = (file) ->
+      console.log '------'.cyan
+
+      console.log 'file'.red, file
+      # console.log 'file.prereqs()'.red, file.prereqs()
+      console.log 'file.directives()'.red, file.directives()
+      console.log ''
+
+    temp paths.client[0]
+    # temp paths.client[1]
 
     # Finish up.
     paths

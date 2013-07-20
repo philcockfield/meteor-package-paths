@@ -14,29 +14,36 @@ module.exports =
   ###
   Generates an object with ordered list of files to add
   partitioned into execution domains (client / server / shared).
-  @param dir
+
+  @param dir: The root directory to retrieve the file listing from.
+
   ###
   paths: (dir) ->
     # Setup initial conditions.
     dir   = fsPath.resolve(dir)
     paths = wrench.readdirSyncRecursive(dir)
     paths = paths.filter (path) -> not fsPath.extname(path).isBlank() # Filter folder-only paths.
+    paths = paths.map (path) -> "#{ dir }/#{ path }"
+    files = paths.map (path) -> new File(path)
+
 
     # Partition paths into their execution domains.
-    filter = (domain) -> result = paths.filter (path) -> executionDomain(path) is domain
+    byDomain = (domain) -> result = files.filter (file) -> file.domain is domain
     result =
-      client: filter(CLIENT)
-      server: filter(SERVER)
-      shared: filter(SHARED)
+      client: byDomain(CLIENT)
+      server: byDomain(SERVER)
+      shared: byDomain(SHARED)
 
     # Process paths.
-    process = (paths) ->
-      paths = sortDeepest(paths)
-      paths = paths.map (path) -> "#{ dir }/#{ path }"
-      paths
+    process = (domain, files) ->
+      files = sortDeepest(files)
+      # paths = paths.map (path) -> "#{ dir }/#{ path }"
+      # paths = paths.map (path) -> new File(domain, path)
+      files
 
-    for key, paths of result
-      result[key] = process(paths)
+    for key, files of result
+      result[key] = process(key, files)
+
 
     # Finish up.
     result
@@ -49,10 +56,54 @@ module.exports =
 # PRIVATE --------------------------------------------------------------------------
 
 
+class File
+  constructor: (@path) ->
+    @dir       = fsPath.dirname(@path)
+    @extension = fsPath.extname(@path)
+    @domain    = executionDomain(@)
 
-executionDomain = (path) ->
+
+  prereqs: ->
+
+  ###
+  Retrieves an array of file directives from the initial lines that start
+  with the directive comment, eg:
+    //= (javascript)
+    #=  (coffeescript)
+  ###
+  directives: ->
+    # Setup initial conditions.
+    prefix = switch @extension
+      when '.js' then '//='
+      when '.coffee' then '#='
+    return unless prefix
+
+    # Read the directive lines into an array
+    reader = new wrench.LineReader(@path)
+    readLine = ->
+      if reader.hasNextLine()
+        line = reader.getNextLine()
+        return line if line.startsWith(prefix)
+
+    result = []
+    while line = readLine()
+      result.push(line)
+
+    # Finish up.
+    reader.close()
+    result
+
+
+
+
+
+
+
+
+
+executionDomain = (file) ->
   # Find the last reference within the path to an execution domain.
-  for part in path.split('/').reverse()
+  for part in file.path.split('/').reverse()
     return CLIENT if part is CLIENT
     return SERVER if part is SERVER
     return SHARED if part is SHARED
@@ -60,23 +111,14 @@ executionDomain = (path) ->
   SHARED # No execution domain found - default to 'shared'.
 
 
-toParts = (path) ->
-  dir = fsPath.dirname(path)
-  dir = '' if dir is '.'
-  result =
-    path:   path
-    dir:    dir
-    file:   fsPath.basename(path)
-    ext:    fsPath.extname(path)
 
 
-sortDeepest = (paths) ->
+sortDeepest = (files) ->
   # Organize files by folder.
   byFolder = {}
-  for path in paths
-    path = toParts(path)
-    byFolder[path.dir] ?= []
-    byFolder[path.dir].push( path.file )
+  for file in files
+    byFolder[file.dir] ?= []
+    byFolder[file.dir].push( file )
 
   # Convert to array.
   folders = []
@@ -87,15 +129,15 @@ sortDeepest = (paths) ->
   # Sort by depth.
   fnSort = (item) -> item.dir.split('/').length
   folders = folders.sortBy(fnSort, desc:true)
+  folders = folders.sortBy(fnSort, desc:true)
 
-  # Convert to full paths.
+  # Flatten to array.
   result = []
   for item in folders
     for file in item.files
-      result.push "#{ item.dir }/#{ file }".remove(/^\//)
+      result.push file
 
   # Finish up.
   result
-
 
 

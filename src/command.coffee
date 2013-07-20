@@ -39,34 +39,23 @@ program
   .action (path, args) ->
     console.log ''
     console.log 'File:'.red, path.grey
-    file = api.file(path)
-    console.log ''
-    console.log file
-    console.log ''
-    console.log '  - directives'.cyan,  file.directives()
-    console.log '  - prereqs'.cyan,  file.prereqs()
-    console.log ''
+    file =
+    if file = api.file(path)
+      console.log ''
+      console.log file
+      console.log ''
+      console.log '- directives:'.cyan
+      console.log file.directives().map (d) -> d.toString()
 
+      console.log ''
+      console.log '- prereqs:'.cyan
+      console.log file.prereqs().map (d) -> d.toString()
+    else
+      console.log ' Not found.'.red
+    console.log ''
 
 
 
 # Finish up.
 program.parse process.argv
-
-
-
-# --------------------------------------------------------------------------
-
-
-
-# temp = (file) ->
-#   console.log '------'.cyan
-
-#   console.log 'file'.red, file
-#   # console.log 'file.prereqs()'.red, file.prereqs()
-#   console.log 'file.directives()'.red, file.directives()
-#   console.log ''
-
-# temp files.client[0]
-
 

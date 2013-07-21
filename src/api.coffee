@@ -8,7 +8,6 @@ File   = require './file'
 
 
 module.exports = loader =
-
   ###
   Generates the ordered list of files for the entire hierarchy under the given directory (deep).
   @param dir: The root directory to retrieve the file listing from.
@@ -37,11 +36,6 @@ module.exports = loader =
   @param api:       The Meteor package API parameter.
   ###
   addFiles: (toPackage, api) ->
-    console.log ''
-    console.log 'ADD FILES'.green
-    console.log 'toPackage'.red, toPackage
-    console.log 'api'.red, api
-    console.log 'fsPath.resolve(".")'.blue, fsPath.resolve(".")
 
     # Derive the path to the package directory.
     isPath = toPackage.startsWith('.') or toPackage.startsWith('/')
@@ -52,6 +46,7 @@ module.exports = loader =
 
 
     count = 0
+    started = new Date()
     console.log ''
     console.log 'Adding package files to'.green, packageDir
 
@@ -63,42 +58,35 @@ module.exports = loader =
 
     addFiles = (files, where) ->
       for file in files
+        count += 1
         api.add_files(file.path, where)
 
 
     addTree = (dir) ->
       dir = "#{ packageDir }/#{ dir }"
-
-      console.log '--- START'.green, dir.grey
-
-
       if fs.existsSync(dir)
         tree = loader.tree(dir)
-        loader.print(tree)
+        # loader.print(tree)
 
         addFiles(tree.shared, ['client', 'server'])
         addFiles(tree.client, 'client')
         addFiles(tree.server, 'server')
-
-
-      console.log '--- END', dir.grey
-      console.log ''
-
 
     # Add root folders.
     addTree 'shared'
     addTree 'client'
     addTree 'server'
 
-
-    console.log ''
-
-
+    # Finish up.
+    console.log 'Done'.green, "#{ count } files added in #{ started.millisecondsAgo() } msecs.".grey
 
 
 
 
 
+  ###
+  Pretty prints a set of files.
+  ###
   print: (files) ->
     for key, items of files
       if items.length > 0

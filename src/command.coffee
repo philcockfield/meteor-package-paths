@@ -6,7 +6,20 @@ fs     = require 'fs'
 fsPath = require 'path'
 program = require 'commander'
 api     = require('./api')
+js      = require './javascript'
 
+
+
+###
+Pretty prints a set of files.
+###
+print = (files) ->
+  for key, items of files
+    if items.length > 0
+      console.log " #{ key }:".blue
+      for file in items
+        console.log '  File'.cyan, file.path
+      console.log ''
 
 
 
@@ -16,7 +29,7 @@ program
   .action (dir, args) ->
     console.log ''
     console.log 'Tree:'.red, dir.grey
-    api.print(api.tree(dir))
+    print(api.tree(dir))
 
 program
   .command('directory')
@@ -24,7 +37,7 @@ program
   .action (dir, args) ->
     console.log ''
     console.log 'Directory:'.red, dir.grey
-    api.print(api.directory(dir))
+    print(api.directory(dir))
 
 
 program
@@ -54,20 +67,21 @@ program
 program
   .command('js')
   .description('Prints the [add_files] JavaScript to copy into your package.js')
-  .action (path, args) ->
-    api.printJavaScript(fsPath.resolve('.'))
+  .action (cmd, args) ->
+    # Setup initial conditions.
+    args = cmd unless args
+    cmd = null if args is cmd
+    packageDir = (fsPath.resolve('.'))
 
-
-
-# program
-#   .command('test-add-files')
-#   .description('Tests the "addFiles" method with a stub meteor [api] parameter.')
-#   .action (path, args) ->
-#     stub = require('../test/stub')
-#     toPackage = './test/directives'
-#     api.addFiles(toPackage, stub.api)
-
-
+    switch cmd
+      when 'save' then console.log 'save'.red
+      else
+        # Print the JavaScript to the console.
+        console.log 'package.js'.green, packageDir.grey
+        console.log ''
+        console.log "  #{ js.GENERATED_HEADER }".grey
+        console.log js.addFiles(packageDir).red
+        console.log ''
 
 
 

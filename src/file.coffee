@@ -223,9 +223,6 @@ readdir = (dir, deep) ->
 
 toOrderedFiles = (paths, options = {}) ->
   options.withPrereqs ?= true
-
-
-
   paths = paths.filter (path) -> not fsPath.extname(path).isBlank() # Remove folder-only paths.
   files = paths.map (path) -> new File(path, options)
 

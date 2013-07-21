@@ -7,7 +7,8 @@ wrench = require 'wrench'
 File   = require './file'
 
 
-module.exports =
+module.exports = api =
+
   ###
   Generates the ordered list of files for the entire hierarchy under the given directory (deep).
   @param dir: The root directory to retrieve the file listing from.
@@ -31,15 +32,57 @@ module.exports =
 
 
 
-  addFiles: (packageDir, api) ->
+  addFiles: (packageDirName, api) ->
     console.log ''
     console.log 'ADD FILES'.green
-    console.log 'packageDir'.red, packageDir
+    console.log 'packageDirName'.red, packageDirName
     console.log 'api'.red, api
     console.log 'fsPath.resolve(".")'.blue, fsPath.resolve(".")
 
+    # Derive the path to the package directory.
+    packageDir = "#{ fsPath.resolve('.') }/packages/#{ packageDirName }"
+    console.log ''
+    console.log 'Adding files to'.green, packageDir
+
+
+    addTree = (executionDomain, where) ->
+
+      console.log ' ',  executionDomain.blue
+      dir = "#{ packageDir }/#{ executionDomain }"
+
+      console.log 'dir'.red, dir
+
+      console.log ''
+
+      files = api.tree(dir)
+
+      api.print(files)
+
+
+
+
+
+
+
+    addTree 'server', 'server'
+
+
+
+
+
     console.log ''
 
 
 
+
+
+
+
+  print: (files) ->
+    for key, items of files
+      if items.length > 0
+        console.log " #{ key }:".blue
+        for file in items
+          console.log '  File'.cyan, file.path
+        console.log ''
 

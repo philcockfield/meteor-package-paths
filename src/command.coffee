@@ -6,14 +6,6 @@ api     = require('./api')
 program = require 'commander'
 
 
-print = (files) ->
-  for key, items of files
-    if items.length > 0
-      console.log " #{ key }:".blue
-      for file in items
-        console.log '  File'.cyan, file.path
-      console.log ''
-
 
 
 program
@@ -22,7 +14,7 @@ program
   .action (dir, args) ->
     console.log ''
     console.log 'Tree:'.red, dir.grey
-    print(api.tree(dir))
+    api.print(api.tree(dir))
 
 program
   .command('directory')
@@ -30,7 +22,7 @@ program
   .action (dir, args) ->
     console.log ''
     console.log 'Directory:'.red, dir.grey
-    print(api.directory(dir))
+    api.print(api.directory(dir))
 
 
 program

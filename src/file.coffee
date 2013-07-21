@@ -238,6 +238,7 @@ toOrderedFiles = (paths, options = {}) ->
     files = sortDeepest(files)
     files = withPrereqs(files) if options.withPrereqs
     files = files.unique (file) -> file.path
+    files = putHtmlFirst(files)
     files
 
   for key, files of result
@@ -282,6 +283,19 @@ withPrereqs = (files) ->
     result.add(new File(path)) for path in file.prereqs
     result.add(file)
   result
+
+
+
+putHtmlFirst = (files) ->
+  notHtml = files.filter (file) -> fsPath.extname(file.path) isnt '.html'
+  result  = files.filter (file) -> fsPath.extname(file.path) is '.html'
+  result.add(notHtml)
+  result
+
+
+
+
+
 
 
 

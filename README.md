@@ -1,6 +1,34 @@
 # Meteor Package Loader
-
 Provides sprockets style loading of files for a Meteor package.
+
+
+## Installation
+Install globally so you can use the command line from any folder.
+
+  npm install -g meteor-package-loader
+
+## Usage
+This module assumes you are structuring your package folders like this:
+
+    /my-package
+      /client
+      /server
+      /shared
+
+From within your package folder, generate the file listing for the `package.json` with:
+
+    package js
+
+This will emit the `api.add_files` listing for your package taking into account any
+sprokets style comment directives you may have within any of the files.
+
+The default load order is deepest to shallowest.  Use the comment directives to override
+this ordering:
+
+    require
+    require_directory
+    require_tree
+
 
 
 ## Testing from the Command Line

@@ -15,7 +15,7 @@ REQUIRE_DIRECTORY = 'require_directory'
 Represents a single file.
 ###
 module.exports = class File
-  constructor: (@path) ->
+  constructor: (@path, options = {}) ->
     # Setup initial conditions.
     @path = fsPath.resolve(@path)
     @exists = fs.existsSync(path)
@@ -28,15 +28,13 @@ module.exports = class File
     @domain    = executionDomain(@)
     @prereqs   = []
 
+    # Build the request list.
+    @_buildPrereqs() if (options.buildPrereqs ? true)
+
 
   isValid: -> @exists and @isFile
   toString: -> @path
 
-  # ancestor: (path, parent) ->
-  #   parent ?= @parent
-  #   return unless parent
-  #   return parent if parent.path is path
-  #   @ancestor(path, parent.parent) # <== RECUSION.
 
   ###
   Retrieves an array of file directives from the initial lines that start
@@ -52,10 +50,11 @@ module.exports = class File
   ###
   directives: ->
     # Setup initial conditions.
+    result = []
     commentPrefix = switch @extension
                       when '.js' then '//='
                       when '.coffee' then '#='
-    return unless commentPrefix
+    return result unless commentPrefix
 
     # Read the directive lines into an array.
     reader = new wrench.LineReader(@path)
@@ -64,7 +63,6 @@ module.exports = class File
         line = reader.getNextLine()
         return line if line.startsWith(commentPrefix)
 
-    result = []
     while line = readLine()
       line = line.remove( new RegExp("^#{ commentPrefix }") )
       line = line.trim()
@@ -82,21 +80,8 @@ module.exports = class File
   Retrieves an ordered array of prerequsite files that need
   to be added before this file.
   ###
-  buildPrereqs: ->
-    # Setup initial conditions.
-    directives = @directives()
-
-    for directive in directives
-
-      console.log '--- START -----'.red
-      console.log 'FILE @path'.blue, @path
-      console.log 'directive', directive.text.red
-      # console.log 'directive.path'.blue, directive.path
-      # console.log 'MATCH'.red, (directive.path is @path)
-      console.log ''
-
-
-
+  _buildPrereqs: ->
+    for directive in @directives()
       for file in directive.toFiles()
         # unless fileExists(file, @prereqs)
         unless file.path is @path
@@ -157,28 +142,9 @@ class Directive
     # Setup initial conditions.
     return result unless @isValid
 
-    # if _cache[@path]?
-    #   console.log 'EXIT toFiles, already cached'.red, @file.path
-
-    # return result if _cache[@file.path]?
-
-
 
     addFiles = (files) => add(file) for file in files
     add = (file) =>
-
-        alreadyAdded = (path) -> result.any (item) -> item.path is path
-
-
-        console.log '---------- ADD'.green
-        console.log 'directive @text'.green, @text
-        console.log 'directive @path'.green, @path
-        console.log 'ADD file.path'.green, file.path
-        console.log 'isCached'.green, _cache[file.path]?
-        console.log 'alreadyAdded(file.path)'.green, alreadyAdded(file.path)
-        console.log ''
-
-
 
         # return if alreadyAdded(file.path)
         return if _cache[file.path]?
@@ -191,65 +157,20 @@ class Directive
           throw new Error("The file for the directive [#{ @text }] is in the exeuction domain '#{ file.domain }' and cannot be added to the execution domain '#{ @file.domain }' of the file [#{ @file.path }]")
 
         # Add any pre-requisites first.
-        # console.log 'fileExists(file, @file.prereqs)', fileExists(file, @file.prereqs)
-        # console.log '@file.path', @file.path
-        # console.log '@path', @path
-
-        directives = file.directives()
-        for directive in directives
-
-
+        for directive in file.directives()
           unless _cache[directive.path]
-            console.log 'ADD DIRTECTIVE'.blue, directive.text.green
-            console.log '++ CONTEXT'.blue, @path
-
             files = directive.toFiles(result, _cache)
-            console.log '++ FILES'.blue, files.map (p) -> p.path
-
             addFiles(files)
-
-            console.log ''
-
-          # unless isMatch
-            # prereqs = file.buildPrereqs(false)
-            # add(prereqFile) for prereqFile in prereqs
-
-
-
-
-        # console.log ''
-        # if deep
-        #   prereqs = file.buildPrereqs(false)
-
-        # unless fileExists(file, @file.prereqs)
-        #   prereqs = file.prereqs
-        #   if prereqs.length > 0
-        #     add(prereqFile) for prereqFile in prereqs
-
 
 
         # Add the given file.
-        console.log 'pushing INTO'.blue, @path
-        console.log 'pushed'.blue, file.path
         result.push(file)
-
-        console.log '--||'.red, @text
-        console.log '@file.path'.red, @file.path
-        console.log 'result'.red, result.map (p) -> p.path
-        console.log ''
 
 
 
     switch @type
-      when REQUIRE
-        console.log 'REQUIRE'.red, @text
-        console.log '@text', @text
-        console.log '@path', @path.red
-        console.log '@file.path', @file.path
+      when REQUIRE then add(new File(@path, buildPrereqs:false))
 
-        console.log ''
-        # unless @file.ancestor(@path)?
-        add(new File(@path))
 
 
       # when REQUIRE_TREE

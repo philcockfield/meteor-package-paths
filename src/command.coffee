@@ -39,20 +39,21 @@ program
   .action (path, args) ->
     console.log ''
     console.log 'File:'.red, path.grey
-    file =
-    if file = api.file(path)
-      console.log ''
-      console.log file
+    unless file = api.file(path)
+      console.log ' Not found.'.red
+    else
       console.log ''
       console.log '- directives:'.cyan
       console.log file.directives().map (d) -> d.toString()
 
       console.log ''
       console.log '- prereqs:'.cyan
-      file.buildPrereqs()
       console.log file.prereqs.map (d) -> d.toString()
-    else
-      console.log ' Not found.'.red
+
+      console.log ''
+      console.log '- [object File]:'.cyan
+      console.log file
+
     console.log ''
 
 

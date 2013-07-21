@@ -31,3 +31,15 @@ module.exports =
 
 
 
+  addFiles: (packageDir, api) ->
+    console.log ''
+    console.log 'ADD FILES'.green
+    console.log 'packageDir'.red, packageDir
+    console.log 'api'.red, api
+    console.log 'fsPath.resolve(".")'.blue, fsPath.resolve(".")
+
+    console.log ''
+
+
+
+

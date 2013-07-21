@@ -10,6 +10,8 @@ REQUIRE           = 'require'
 REQUIRE_TREE      = 'require_tree'
 REQUIRE_DIRECTORY = 'require_directory'
 
+SUPPORTED_EXTENSIONS = ['.js', '.coffee', '.html', '.css', '.styl']
+
 
 ###
 Represents a single file.
@@ -214,6 +216,7 @@ readdir = (dir, deep) ->
   else
     paths = fs.readdirSync(dir)
   paths = paths.map (path) -> "#{ dir }/#{ path }"
+  paths = paths.filter (path) -> SUPPORTED_EXTENSIONS.any (ext) -> fsPath.extname(path) is ext
   paths
 
 

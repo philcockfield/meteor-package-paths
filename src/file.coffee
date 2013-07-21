@@ -29,7 +29,7 @@ module.exports = class File
     @prereqs   = []
 
     # Build the request list.
-    @_buildPrereqs() if (options.buildPrereqs ? true)
+    @_buildPrereqs() if (options.withPrereqs ? true)
 
 
   isValid: -> @exists and @isFile
@@ -102,6 +102,8 @@ module.exports = class File
 ###
 Generates the ordered list of files for the entire hierarchy under the given directory (deep).
 @param dir: The root directory to retrieve the file listing from.
+@param options:
+          - withPrereqs: (default:true) Flag indicating each files pre-requs collection should be built upon construction.
 ###
 File.tree = (dir, options) -> toOrderedFiles(readdir(dir, true), options)
 
@@ -109,6 +111,8 @@ File.tree = (dir, options) -> toOrderedFiles(readdir(dir, true), options)
 ###
 Generates the ordered list of files under the given directory (shallow).
 @param dir: The root directory to retrieve the file listing from.
+@param options:
+          - withPrereqs: (default:true) Flag indicating each files pre-requs collection should be built upon construction.
 ###
 File.directory = (dir, options) -> toOrderedFiles(readdir(dir, false), options)
 
@@ -151,9 +155,6 @@ class Directive
     addFiles = (files) => add(file) for file in files
     add = (file) =>
         # Don't add if the file has already been cached.
-
-        console.log 'isCached', _cache[file.path]?, file.path.blue
-
         return if _cache[file.path]?
         _cache[file.path] = file
 
@@ -173,23 +174,10 @@ class Directive
         result.push(file)
 
 
-
-
-
-
     switch @type
-      when REQUIRE
-        console.log 'REQUIRE'.green, @text
-        add(new File(@path, buildPrereqs:false))
-
-      when REQUIRE_DIRECTORY
-        console.log 'REQUIRE_DIRECTORY'.green, @text
-        addFiles File.directory(@path, buildPrereqs:false)[@file.domain]
-
-      when REQUIRE_TREE
-        console.log 'REQUIRE_TREE'.green, @text
-        addFiles File.tree(@path, buildPrereqs:false)[@file.domain]
-
+      when REQUIRE            then add(new File(@path, withPrereqs:false))
+      when REQUIRE_DIRECTORY  then addFiles File.directory(@path, withPrereqs:false)[@file.domain]
+      when REQUIRE_TREE       then addFiles File.tree(@path, withPrereqs:false)[@file.domain]
 
 
     # Finish up.
@@ -231,6 +219,10 @@ readdir = (dir, deep) ->
 
 
 toOrderedFiles = (paths, options = {}) ->
+  options.withPrereqs ?= true
+
+
+
   paths = paths.filter (path) -> not fsPath.extname(path).isBlank() # Remove folder-only paths.
   files = paths.map (path) -> new File(path, options)
 
@@ -244,6 +236,8 @@ toOrderedFiles = (paths, options = {}) ->
   # Process paths.
   process = (files) ->
     files = sortDeepest(files)
+    files = withPrereqs(files) if options.withPrereqs
+    files = files.unique (file) -> file.path
     files
 
   for key, files of result
@@ -280,6 +274,14 @@ sortDeepest = (files) ->
   # Finish up.
   result
 
+
+
+withPrereqs = (files) ->
+  result = []
+  for file in files
+    result.add(new File(path)) for path in file.prereqs
+    result.add(file)
+  result
 
 
 

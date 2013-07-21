@@ -5,7 +5,7 @@ Provides sprockets style loading of files for a Meteor package.
 ## Installation
 Install globally so you can use the command line from any folder.
 
-  npm install -g meteor-package-loader
+    npm install -g meteor-package-loader
 
 ## Usage
 This module assumes you are structuring your package folders like this:

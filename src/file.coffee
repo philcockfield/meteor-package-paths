@@ -81,14 +81,18 @@ module.exports = class File
   to be added before this file.
   ###
   _buildPrereqs: ->
+    files = []
     for directive in @directives()
       for file in directive.toFiles()
         # unless fileExists(file, @prereqs)
         unless file.path is @path
-          @prereqs.push(file)
+          files.push(file)
 
     # Finish up.
-    @prereqs
+    files = files.map (file) -> file.path
+    files = files.unique()
+
+    @prereqs = files
 
 
 
@@ -104,7 +108,6 @@ Generates the ordered list of files under the given directory (shallow).
 @param dir: The root directory to retrieve the file listing from.
 ###
 File.directory = (dir) -> toOrderedFiles(readdir(dir, false))
-
 
 
 
@@ -142,11 +145,10 @@ class Directive
     # Setup initial conditions.
     return result unless @isValid
 
-
+    # alreadyAdded = (path) -> result.any (item) -> item.path is path
     addFiles = (files) => add(file) for file in files
     add = (file) =>
-
-        # return if alreadyAdded(file.path)
+        # Don't add if the file has already been cached.
         return if _cache[file.path]?
         _cache[file.path] = file
 
@@ -162,9 +164,11 @@ class Directive
             files = directive.toFiles(result, _cache)
             addFiles(files)
 
-
         # Add the given file.
         result.push(file)
+
+
+
 
 
 

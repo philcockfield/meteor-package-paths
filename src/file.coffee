@@ -82,16 +82,19 @@ module.exports = class File
   ###
   _buildPrereqs: ->
     files = []
-    for directive in @directives()
-      for file in directive.toFiles()
-        # unless fileExists(file, @prereqs)
-        unless file.path is @path
-          files.push(file)
+    cache = {}
 
-    # Finish up.
+    # Add the files for each directive.
+    for directive in @directives()
+      for file in directive.toFiles(files, cache)
+        files.push(file)
+
+    # Process the results.
     files = files.map (file) -> file.path
     files = files.unique()
+    files = files.filter (path) => path isnt @path # Ensure this file is not a pre-req of itself.
 
+    # Finish up.
     @prereqs = files
 
 
@@ -114,7 +117,6 @@ File.directory = (dir) -> toOrderedFiles(readdir(dir, false))
 
 
 # --------------------------------------------------------------------------
-
 
 
 
@@ -144,11 +146,15 @@ class Directive
   toFiles: (result = [], _cache = {}) ->
     # Setup initial conditions.
     return result unless @isValid
+    # return result if _cache[@path]?
 
     # alreadyAdded = (path) -> result.any (item) -> item.path is path
     addFiles = (files) => add(file) for file in files
     add = (file) =>
         # Don't add if the file has already been cached.
+
+        console.log 'isCached', _cache[file.path]?, file.path.blue
+
         return if _cache[file.path]?
         _cache[file.path] = file
 
@@ -173,13 +179,16 @@ class Directive
 
 
     switch @type
-      when REQUIRE then add(new File(@path, buildPrereqs:false))
+      when REQUIRE
+        console.log 'REQUIRE'.green, @text
+        add(new File(@path, buildPrereqs:false))
 
 
 
-      # when REQUIRE_TREE
-      #   console.log 'TREE'.green, @text
-      #   addFiles File.tree(@path)[@file.domain]
+      when REQUIRE_DIRECTORY
+
+        console.log 'REQUIRE_DIRECTORY'.green, @text
+        addFiles File.directory(@path)[@file.domain]
 
 
 

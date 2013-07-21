@@ -85,12 +85,13 @@ module.exports = loader =
   printJavaScript: (packageDir) ->
     console.log 'package.js'.green
     console.log ''
+    console.log '  // Generated with [meteor-package-loader].'.grey
 
     printFiles = (files, whereParam) ->
       for file in files
 
         path = file.path
-        path = path.remove(new RegExp("^#{ packageDir }"))
+        path = path.remove(new RegExp("^#{ packageDir }/"))
 
         where = ''
         for item in whereParam

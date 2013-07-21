@@ -2,8 +2,10 @@
 require 'colors'
 require 'sugar'
 
-api     = require('./api')
+fs     = require 'fs'
+fsPath = require 'path'
 program = require 'commander'
+api     = require('./api')
 
 
 
@@ -49,16 +51,24 @@ program
     console.log ''
 
 
-
 program
-  .command('add-files')
-  .description('Tests the "addFiles" method with a stub meteor [api] parameter.')
+  .command('js')
+  .description('Prints the [add_files] JavaScript to copy into your package.js')
   .action (path, args) ->
+    api.printJavaScript(fsPath.resolve('.'))
 
-    stub = require('../test/stub')
-    toPackage = './test/directives'
 
-    api.addFiles(toPackage, stub.api)
+
+# program
+#   .command('test-add-files')
+#   .description('Tests the "addFiles" method with a stub meteor [api] parameter.')
+#   .action (path, args) ->
+#     stub = require('../test/stub')
+#     toPackage = './test/directives'
+#     api.addFiles(toPackage, stub.api)
+
+
+
 
 
 

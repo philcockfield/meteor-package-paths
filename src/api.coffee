@@ -67,7 +67,6 @@ module.exports = loader =
       if fs.existsSync(dir)
         tree = loader.tree(dir)
         # loader.print(tree)
-
         addFiles(tree.shared, ['client', 'server'])
         addFiles(tree.client, 'client')
         addFiles(tree.server, 'server')
@@ -81,6 +80,42 @@ module.exports = loader =
     console.log 'Done'.green, "#{ count } files added in #{ started.millisecondsAgo() } msecs.".grey
 
 
+
+
+  printJavaScript: (packageDir) ->
+    console.log 'package.js'.green
+    console.log ''
+
+    printFiles = (files, whereParam) ->
+      for file in files
+
+        path = file.path
+        path = path.remove(new RegExp("^#{ packageDir }"))
+
+        where = ''
+        for item in whereParam
+          where += "'#{ item }', "
+
+        where = where.remove(/, $/)
+        where = "[#{ where }]" if whereParam.length > 1
+
+        js = "  api.add_files('#{ path }', #{ where });"
+        console.log js.red
+
+
+    print = (dir) ->
+      dir = "#{ packageDir }/#{ dir }"
+      if fs.existsSync(dir)
+        tree = loader.tree(dir)
+        printFiles(tree.shared, ['client', 'server'])
+        printFiles(tree.client, ['client'])
+        printFiles(tree.server, ['server'])
+
+
+    print 'shared'
+    print 'client'
+    print 'server'
+    console.log ''
 
 
 

@@ -7,7 +7,7 @@ wrench = require 'wrench'
 File   = require './file'
 
 
-module.exports = api =
+module.exports = loader =
 
   ###
   Generates the ordered list of files for the entire hierarchy under the given directory (deep).
@@ -31,43 +31,64 @@ module.exports = api =
     file if file.isValid()
 
 
-
-  addFiles: (packageDirName, api) ->
+  ###
+  Adds the files of the given package to the Meteor [api] object.
+  @param toPackage: The folder-name of the package, or a path to the package folder.
+  @param api:       The Meteor package API parameter.
+  ###
+  addFiles: (toPackage, api) ->
     console.log ''
     console.log 'ADD FILES'.green
-    console.log 'packageDirName'.red, packageDirName
+    console.log 'toPackage'.red, toPackage
     console.log 'api'.red, api
     console.log 'fsPath.resolve(".")'.blue, fsPath.resolve(".")
 
     # Derive the path to the package directory.
-    packageDir = "#{ fsPath.resolve('.') }/packages/#{ packageDirName }"
+    isPath = toPackage.startsWith('.') or toPackage.startsWith('/')
+    if isPath
+      packageDir = fsPath.resolve "#{ fsPath.resolve('.') }/#{ toPackage }"
+    else
+      packageDir = "#{ fsPath.resolve('.') }/packages/#{ toPackage }"
+
+
+    count = 0
     console.log ''
-    console.log 'Adding files to'.green, packageDir
+    console.log 'Adding package files to'.green, packageDir
+
+    where =
+      client: 'client'
+      server: 'server'
+      shared: ['client', 'server']
 
 
-    addTree = (executionDomain, where) ->
+    addFiles = (files, where) ->
+      for file in files
+        api.add_files(file.path, where)
 
-      console.log ' ',  executionDomain.blue
-      dir = "#{ packageDir }/#{ executionDomain }"
 
-      console.log 'dir'.red, dir
+    addTree = (dir) ->
+      dir = "#{ packageDir }/#{ dir }"
 
+      console.log '--- START'.green, dir.grey
+
+
+      if fs.existsSync(dir)
+        tree = loader.tree(dir)
+        loader.print(tree)
+
+        addFiles(tree.shared, ['client', 'server'])
+        addFiles(tree.client, 'client')
+        addFiles(tree.server, 'server')
+
+
+      console.log '--- END', dir.grey
       console.log ''
 
-      files = api.tree(dir)
 
-      api.print(files)
-
-
-
-
-
-
-
-    addTree 'server', 'server'
-
-
-
+    # Add root folders.
+    addTree 'shared'
+    addTree 'client'
+    addTree 'server'
 
 
     console.log ''

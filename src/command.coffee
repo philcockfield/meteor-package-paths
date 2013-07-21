@@ -50,6 +50,18 @@ program
 
 
 
+program
+  .command('add-files')
+  .description('Tests the "addFiles" method with a stub meteor [api] parameter.')
+  .action (path, args) ->
+
+    stub = require('../test/stub')
+    toPackage = './test/directives'
+
+    api.addFiles(toPackage, stub.api)
+
+
+
 # Finish up.
 program.parse process.argv
 

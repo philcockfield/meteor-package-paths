@@ -35,7 +35,7 @@ module.exports = class File
     @_buildPrereqs() if (options.withPrereqs ? true)
 
 
-  isValid: -> @exists and @isFile
+  isValid:  -> @exists and @isFile
   toString: -> @path
 
 
@@ -145,6 +145,12 @@ class Directive
     # Format the path.
     if @isValid and @path.startsWith('.')
       @path = fsPath.resolve("#{ @file.dir }/#{ @path }")
+
+      # If this is a file 'require' directive, and an extension is not
+      # present, infer the file-extension from the containing file.
+      if @type is REQUIRE and fsPath.extname(@path).isBlank()
+        @path += @file.extension
+
 
 
   toString: -> @text
@@ -293,6 +299,7 @@ putHtmlFirst = (files) ->
   result  = files.filter (file) -> fsPath.extname(file.path) is '.html'
   result.add(notHtml)
   result
+
 
 
 putMainLast = (files) ->

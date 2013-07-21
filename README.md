@@ -42,17 +42,17 @@ For example:
 
 ## Testing from the Command Line
 
-    $ bin/command.js --help
+    $ package --help
 
 For example, from the command line:
 
-    bin/command.js directory ./test/simple/client
+    $ package directory ./test/simple/client
 
-    bin/command.js tree ./test/simple
-    bin/command.js tree ./test/directives
+    $ package tree ./test/simple
+    $ package tree ./test/directives
 
-    bin/command.js file ./test/simple/client/child/grand_child/grand_child.coffee
-    bin/command.js file ./test/directives/client/child/grand_child/grand_child.coffee
+    $ package file ./test/simple/client/child/grand_child/grand_child.coffee
+    $ package file ./test/directives/client/child/grand_child/grand_child.coffee
 
 
 

@@ -85,7 +85,7 @@ module.exports = loader =
   printJavaScript: (packageDir) ->
     console.log 'package.js'.green
     console.log ''
-    console.log '  // Generated with [meteor-package-loader].'.grey
+    console.log '  // Generated with: github.com/philcockfield/meteor-package-loader'.grey
 
     printFiles = (files, whereParam) ->
       for file in files

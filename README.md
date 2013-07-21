@@ -26,9 +26,18 @@ The default load order is deepest to shallowest.  Use the comment directives to 
 this ordering:
 
     require
-    require_directory
-    require_tree
+    require_directory (shallow)
+    require_tree      (deep)
 
+For example:
+
+    #= require file.coffee
+    #= require_tree ../dir/foo
+    #= require_directory ../dir/foo
+
+    //= require file.js
+    //= require_tree ../dir/foo
+    //= require_directory ../dir/foo
 
 
 ## Testing from the Command Line
@@ -46,6 +55,16 @@ For example, from the command line:
     bin/command.js file ./test/directives/client/child/grand_child/grand_child.coffee
 
 
+
+## Notes
+The execution domain (client/server/shared) is whatever the closest `where` name folder is.
+For example, you could override the `shared` folder, placing some `client` like this:
+
+  /shared
+    foo.js
+    /client
+      css.styl
+      template.html
 
 
 

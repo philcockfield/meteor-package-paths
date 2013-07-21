@@ -103,14 +103,14 @@ module.exports = class File
 Generates the ordered list of files for the entire hierarchy under the given directory (deep).
 @param dir: The root directory to retrieve the file listing from.
 ###
-File.tree = (dir) -> toOrderedFiles(readdir(dir, true))
+File.tree = (dir, options) -> toOrderedFiles(readdir(dir, true), options)
 
 
 ###
 Generates the ordered list of files under the given directory (shallow).
 @param dir: The root directory to retrieve the file listing from.
 ###
-File.directory = (dir) -> toOrderedFiles(readdir(dir, false))
+File.directory = (dir, options) -> toOrderedFiles(readdir(dir, false), options)
 
 
 
@@ -146,7 +146,6 @@ class Directive
   toFiles: (result = [], _cache = {}) ->
     # Setup initial conditions.
     return result unless @isValid
-    # return result if _cache[@path]?
 
     # alreadyAdded = (path) -> result.any (item) -> item.path is path
     addFiles = (files) => add(file) for file in files
@@ -188,7 +187,7 @@ class Directive
       when REQUIRE_DIRECTORY
 
         console.log 'REQUIRE_DIRECTORY'.green, @text
-        addFiles File.directory(@path)[@file.domain]
+        addFiles File.directory(@path, buildPrereqs:false)[@file.domain]
 
 
 
@@ -231,9 +230,9 @@ readdir = (dir, deep) ->
 
 
 
-toOrderedFiles = (paths) ->
+toOrderedFiles = (paths, options = {}) ->
   paths = paths.filter (path) -> not fsPath.extname(path).isBlank() # Remove folder-only paths.
-  files = paths.map (path) -> new File(path)
+  files = paths.map (path) -> new File(path, options)
 
   # Partition paths into their execution domains.
   byDomain = (domain) -> files.filter (file) -> file.domain is domain

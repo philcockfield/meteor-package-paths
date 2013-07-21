@@ -30,57 +30,6 @@ module.exports = loader =
     file if file.isValid()
 
 
-  ###
-  Adds the files of the given package to the Meteor [api] object.
-  @param toPackage: The folder-name of the package, or a path to the package folder.
-  @param api:       The Meteor package API parameter.
-  ###
-  addFiles: (toPackage, api) ->
-
-    # Derive the path to the package directory.
-    isPath = toPackage.startsWith('.') or toPackage.startsWith('/')
-    if isPath
-      packageDir = fsPath.resolve "#{ fsPath.resolve('.') }/#{ toPackage }"
-    else
-      packageDir = "#{ fsPath.resolve('.') }/packages/#{ toPackage }"
-
-
-    count = 0
-    started = new Date()
-    console.log ''
-    console.log 'Adding package files to'.green, packageDir
-
-    where =
-      client: 'client'
-      server: 'server'
-      shared: ['client', 'server']
-
-
-    addFiles = (files, where) ->
-      for file in files
-        count += 1
-        api.add_files(file.path, where)
-
-
-    addTree = (dir) ->
-      dir = "#{ packageDir }/#{ dir }"
-      if fs.existsSync(dir)
-        tree = loader.tree(dir)
-        # loader.print(tree)
-        addFiles(tree.shared, ['client', 'server'])
-        addFiles(tree.client, 'client')
-        addFiles(tree.server, 'server')
-
-    # Add root folders.
-    addTree 'shared'
-    addTree 'client'
-    addTree 'server'
-
-    # Finish up.
-    console.log 'Done'.green, "#{ count } files added in #{ started.millisecondsAgo() } msecs.".grey
-
-
-
 
   printJavaScript: (packageDir) ->
     console.log 'package.js'.green

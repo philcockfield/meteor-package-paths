@@ -57,6 +57,8 @@ For example, from the command line:
 
 
 ## Notes
+
+### Overrides
 The execution domain (client/server/shared) is whatever the closest `where` name folder is.
 For example, you could override the `shared` folder, placing some `client` like this:
 
@@ -65,6 +67,10 @@ For example, you could override the `shared` folder, placing some `client` like 
     /client
       css.styl
       template.html
+
+
+### Main
+Files named `main` will be ordered last.
 
 
 

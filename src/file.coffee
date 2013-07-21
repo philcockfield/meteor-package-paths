@@ -27,6 +27,7 @@ module.exports = class File
     # Store values.
     @dir       = fsPath.dirname(@path)
     @extension = fsPath.extname(@path)
+    @name      = fsPath.basename(@path).remove(new RegExp("#{ @extension }$"))
     @domain    = executionDomain(@)
     @prereqs   = []
 
@@ -239,6 +240,7 @@ toOrderedFiles = (paths, options = {}) ->
     files = withPrereqs(files) if options.withPrereqs
     files = files.unique (file) -> file.path
     files = putHtmlFirst(files)
+    files = putMainLast(files)
     files
 
   for key, files of result
@@ -293,8 +295,11 @@ putHtmlFirst = (files) ->
   result
 
 
-
-
+putMainLast = (files) ->
+  mainFiles  = files.filter (file) -> file.name is 'main'
+  files = files.filter (file) -> file.name isnt 'main'
+  files.add(mainFiles)
+  files
 
 
 

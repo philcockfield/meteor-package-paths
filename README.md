@@ -9,9 +9,13 @@ Provides sprockets style loading of files for a Meteor package.
 
 For example, from the command line:
 
-    bin/command.js tree ./test/sample
-    bin/command.js directory ./test/sample/client
-    bin/command.js file ./test/sample/client/child/grand_child/grand_child.coffee
+    bin/command.js directory ./test/simple/client
+
+    bin/command.js tree ./test/simple
+    bin/command.js tree ./test/directives
+
+    bin/command.js file ./test/simple/client/child/grand_child/grand_child.coffee
+    bin/command.js file ./test/directives/client/child/grand_child/grand_child.coffee
 
 
 

@@ -182,13 +182,13 @@ class Directive
         console.log 'REQUIRE'.green, @text
         add(new File(@path, buildPrereqs:false))
 
-
-
       when REQUIRE_DIRECTORY
-
         console.log 'REQUIRE_DIRECTORY'.green, @text
         addFiles File.directory(@path, buildPrereqs:false)[@file.domain]
 
+      when REQUIRE_TREE
+        console.log 'REQUIRE_TREE'.green, @text
+        addFiles File.tree(@path, buildPrereqs:false)[@file.domain]
 
 
 

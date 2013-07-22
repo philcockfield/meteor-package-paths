@@ -13,13 +13,13 @@ module.exports =
   @returns true if the package file was created, otherwise false.
   ###
   create: (dir, options = {}) ->
+    # Setup initial conditions.
     force = options.force is true
     path  = fsPath.join(dir, 'package.js')
     return false if fs.existsSync(path) and not force
 
-
+    # Save the base template.
     add_files = js.addFiles(dir).trim()
-
     tmpl =
       """
       Package.describe({
@@ -34,16 +34,16 @@ module.exports =
         api.use('http', ['client', 'server']);
         api.use('templating', 'client');
         api.use('core');
-
-        #{ js.GENERATED_HEADER }
-        #{ add_files }
-
       });
 
       """
 
-    # Finish up.
     fs.writeFileSync(path, tmpl)
+
+    # Insert the "add_files" block.
+    @update(dir)
+
+    # Finish up.
     true
 
 
@@ -61,6 +61,7 @@ module.exports =
     lines = lines.filter (line) ->
       return false if line.has(/api.add_files/)
       return false if line.has(new RegExp(js.GENERATED_HEADER))
+      return false if line.has(new RegExp(js.GENERATED_TIME_STAMP))
       true
     lines = filterWithinOnUse lines, (line) -> not line.isBlank()
 
@@ -77,6 +78,7 @@ module.exports =
 
     addLine()
     addLine("  #{ js.GENERATED_HEADER }")
+    addLine("  #{ js.GENERATED_TIME_STAMP } #{ new Date() }")
     for fileLine in js.addFiles(dir).trim().split('\n')
       addLine("  #{ fileLine.trim() }")
     addLine()

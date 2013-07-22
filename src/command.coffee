@@ -5,9 +5,10 @@ require 'sugar'
 fs     = require 'fs'
 fsPath = require 'path'
 program = require 'commander'
+
 api     = require('./api')
 js      = require './javascript'
-
+pkg     = require './package'
 
 
 ###
@@ -65,24 +66,37 @@ program
 
 
 program
+  .command('create')
+  .description('Creates a new package.js file.')
+  .option('-f --force', 'Overrite existing files')
+  .action (args) ->
+    dir = fsPath.resolve('.')
+
+
+
+    if pkg.create(dir, args)
+      console.log 'Created package.js'.green, dir.grey
+    else
+      console.log 'Cannot create package.js - file already exists.'.red
+      console.log ' ', dir.grey
+
+
+
+
+
+
+
+
+program
   .command('js')
   .description('Prints the [add_files] JavaScript to copy into your package.js')
   .action (cmd, args) ->
-    # Setup initial conditions.
-    args = cmd unless args
-    cmd = null if args is cmd
-    packageDir = (fsPath.resolve('.'))
-
-    switch cmd
-      when 'save' then console.log 'save'.red
-      else
-        # Print the JavaScript to the console.
-        console.log 'package.js'.green, packageDir.grey
-        console.log ''
-        console.log "  #{ js.GENERATED_HEADER }".grey
-        console.log js.addFiles(packageDir).red
-        console.log ''
-
+    dir = fsPath.resolve('.')
+    console.log 'package.js'.green, dir.grey
+    console.log ''
+    console.log "  #{ js.GENERATED_HEADER }".grey
+    console.log js.addFiles(dir).red
+    console.log ''
 
 
 

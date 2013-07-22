@@ -66,28 +66,6 @@ program
 
 
 program
-  .command('create')
-  .description('Creates a new package.js file.')
-  .option('-f --force', 'Overrite existing files')
-  .action (args) ->
-    dir = fsPath.resolve('.')
-
-
-
-    if pkg.create(dir, args)
-      console.log 'Created package.js'.green, dir.grey
-    else
-      console.log 'Cannot create package.js - file already exists.'.red
-      console.log ' ', dir.grey
-
-
-
-
-
-
-
-
-program
   .command('js')
   .description('Prints the [add_files] JavaScript to copy into your package.js')
   .action (cmd, args) ->
@@ -97,6 +75,31 @@ program
     console.log "  #{ js.GENERATED_HEADER }".grey
     console.log js.addFiles(dir).red
     console.log ''
+
+
+program
+  .command('create')
+  .description('Creates a new package.js file.')
+  .option('-f --force', 'Overrite existing files')
+  .action (args) ->
+    dir = fsPath.resolve('.')
+    if pkg.create(dir, args)
+      console.log 'Created package.js'.green
+    else
+      console.log 'Cannot create package.js - file already exists.'.red
+    console.log ''
+
+
+
+program
+  .command('update')
+  .description('Updates the [add_new] statements within the package.js file.')
+  .action (args) ->
+    dir = fsPath.resolve('.')
+    pkg.update(dir)
+    console.log 'Updated package.js'.green
+    console.log ''
+
 
 
 

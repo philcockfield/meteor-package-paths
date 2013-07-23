@@ -22,21 +22,26 @@ To see the available commands, from within your package folder:
 
 To create a fresh `package.js` file with all the correct `api.add_files` entries:
 
+    $ cd my-package
     $ package create
 
 To update an existing `package.js` file:
 
+    $ cd my-package
     $ package update
+
+The resulting `package.js` files will contain the `api.add_files` listing for your package taking into account any
+sprokets style comment directives you may have within any of the files.
 
 And to update your appo's entire set of packages:
 
     $ cd my-app/packages
     $ package update-all
 
-Note, this will not effect any packages that have been sym-linked into your app.
+Note, calling `update-all` will not effect any packages that have been sym-linked into your app.
 
-Resulting `package.js` files will contain the `api.add_files` listing for your package taking into account any
-sprokets style comment directives you may have within any of the files.
+
+## Load Order
 
 The default load order is deepest to shallowest.  Use the comment directives to override
 this ordering:
@@ -71,12 +76,13 @@ For example, from the command line:
     $ package file ./test/directives/client/child/grand_child/grand_child.coffee
 
 
+### Main
+Files named `main` will be ordered last.
 
-## Notes
 
 ### Overrides
-The execution domain (client/server/shared) is whatever the closest `where` name folder is.
-For example, you could override the `shared` folder, placing some `client` like this:
+The execution domain (`client` / `server` / `shared`) is whatever the closest `where` name folder is.
+For example, you could override the `shared` folder, declaring some `client`-only files within it like this:
 
   /shared
     foo.js
@@ -85,8 +91,6 @@ For example, you could override the `shared` folder, placing some `client` like 
       template.html
 
 
-### Main
-Files named `main` will be ordered last.
 
 
 
@@ -94,7 +98,7 @@ Files named `main` will be ordered last.
 
 The [MIT License](http://www.opensource.org/licenses/mit-license.php) (MIT)
 
-Copyright © 2013 Phil Cockfield
+Copyright © 2013 Phil Cockfield | Tim Haines
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

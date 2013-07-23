@@ -1,5 +1,5 @@
 # Meteor Package Loader
-Provides sprockets style loading of files for a Meteor package.
+Provides [sprockets](https://github.com/sstephenson/sprockets) style loading of files for a Meteor package.
 
 
 ## Installation
@@ -30,7 +30,7 @@ To update an existing `package.js` file:
     $ cd my-package
     $ package update
 
-The resulting `package.js` files will contain the `api.add_files` listing for your package taking into account any
+The resulting `package.js` file will contain the `api.add_files` listing for your package taking into account any
 sprokets style comment directives you may have within any of the files.
 
 And to update your appo's entire set of packages:
@@ -76,11 +76,11 @@ For example, from the command line:
     $ package file ./test/directives/client/child/grand_child/grand_child.coffee
 
 
-### Main
+#### Main
 Files named `main` will be ordered last.
 
 
-### Overrides
+#### 'Where' Overrides
 The execution domain (`client` / `server` / `shared`) is whatever the closest `where` name folder is.
 For example, you could override the `shared` folder, declaring some `client`-only files within it like this:
 
@@ -98,7 +98,7 @@ For example, you could override the `shared` folder, declaring some `client`-onl
 
 The [MIT License](http://www.opensource.org/licenses/mit-license.php) (MIT)
 
-Copyright © 2013 Phil Cockfield | Tim Haines
+Copyright © 2013 [Phil Cockfield](https://github.com/philcockfield) | [Tim Haines](https://github.com/timhaines)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

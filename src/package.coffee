@@ -105,7 +105,6 @@ module.exports =
     paths = paths.filter (path) ->  fs.statSync(path).isDirectory()
     paths = paths.filter (path) ->  not fs.lstatSync(path).isSymbolicLink()
 
-
     # Perform the update operations.
     for path in paths
       dirName        = fsPath.basename(path)
@@ -121,8 +120,8 @@ module.exports =
 
 
 
-
 # PRIVATE --------------------------------------------------------------------------
+
 
 
 readFile = (path) ->
@@ -146,12 +145,12 @@ filterWithinOnUse = (lines, func) ->
       true
 
 getInsertionPoint = (lines) ->
-  insertAt = -1
   withinFunction = false
   for line, i in lines
     withinFunction = true if isFunctionOnUse(line)
     if withinFunction
       return i if isFunctionEnd(line)
+  -1 # Not found.
 
-  # Finish up.
-  -1
+
+

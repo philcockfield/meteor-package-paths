@@ -84,11 +84,11 @@ Files named `main` will be ordered last.
 The execution domain (`client` / `server` / `shared`) is whatever the closest `where` name folder is.
 For example, you could override the `shared` folder, declaring some `client`-only files within it like this:
 
-  /shared
-    foo.js
-    /client
-      css.styl
-      template.html
+    /shared
+      foo.js
+      /client
+        css.styl
+        template.html
 
 
 

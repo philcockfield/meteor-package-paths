@@ -98,11 +98,14 @@ program
   .description('Updates the [add_new] statements within the package.js file')
   .action (args) ->
     dir = fsPath.resolve('.')
-    if pkg.update(dir)
-      console.log 'Updated package.js'.green
-    else
+    unless fs.existsSync(fsPath.join(dir, 'package.js'))
       console.log 'No package.js file to update.'.red, 'Use [create] to create a new package.js file'.grey
-    console.log ''
+    else
+      if pkg.update(dir)
+        console.log 'Updated package.js'.green
+      else
+        console.log 'No change.'.green, 'The package file is already up-to-date.'.grey
+      console.log ''
 
 
 
@@ -113,15 +116,17 @@ program
     dir = fsPath.resolve('.')
     result = pkg.updateAll(dir)
 
-    if result.updated is 0
-      console.log 'No package.js files updated'.red
+    if result.total is 0
+      console.log 'No package.js files available to update'.grey
     else
-      console.log "Updated #{ result.updated } package.js files".green
+      console.log "Updated #{ result.updated } files:".green
       for key, item of result.folders
+        path = item.path.remove(new RegExp("^#{ dir }"))
         if item.updated
-          console.log " - #{ item.path }".grey
+          console.log ' -'.grey, 'Updated'.green, " #{ path }".grey
+        else
+          console.log ' -'.grey, 'Already up-to-date'.red, " #{ path }".grey
     console.log ''
-
 
 
 # Finish up.

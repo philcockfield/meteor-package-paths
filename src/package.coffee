@@ -85,8 +85,13 @@ module.exports =
       addLine("  #{ fileLine.trim() }")
     addLine()
 
+    # Determine if the resulting package.js is different.
+    newPackage = lines.join('\n')
+    currentPackage = readFile(path).join('\n')
+    return false if (newPackage is currentPackage)
+
     # Finish up.
-    fs.writeFileSync(path, lines.join('\n'))
+    fs.writeFileSync(path, newPackage)
     true
 
 
@@ -109,13 +114,14 @@ module.exports =
 
     # Perform the update operations.
     for path in paths
-      dirName        = fsPath.basename(path)
-      wasUpdated     = @update(path)
-      result.total   += 1
-      result.updated += 1 if wasUpdated
-      result.folders[dirName] =
-        updated: wasUpdated
-        path:    fsPath.join(path, 'package.js')
+      dirName = fsPath.basename(path)
+      if fs.existsSync(fsPath.join("#{ path }/package.js"))
+        wasUpdated = @update(path)
+        result.total   += 1
+        result.updated += 1 if wasUpdated
+        result.folders[dirName] =
+          updated: wasUpdated
+          path:    fsPath.join(path, 'package.js')
 
     # Finish up.
     result

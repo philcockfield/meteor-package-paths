@@ -1,5 +1,5 @@
 Package.describe({
-  summary: 'My Package'
+  summary: ''
 });
 
 

@@ -104,7 +104,9 @@ module.exports =
 
     # Get the child folders.
     paths = fs.readdirSync(dir).map (name) -> fsPath.join(dir, name)
-    paths = paths.filter (path) -> fs.statSync(path).isDirectory()
+    paths = paths.filter (path) ->  fs.statSync(path).isDirectory()
+    paths = paths.filter (path) ->  not fs.lstatSync(path).isSymbolicLink()
+
 
     # Perform the update operations.
     for path in paths

@@ -12,7 +12,6 @@ Package.on_use(function (api) {
   api.use('core');
 
   // Generated with: github.com/philcockfield/meteor-package-loader
-  // Created at: Tue Jul 23 2013 14:51:34 GMT+1200 (NZST)
   api.add_files('shared/template.html', ['client', 'server']);
   api.add_files('shared/file.coffee', ['client', 'server']);
   api.add_files('shared/client/template.html', 'client');

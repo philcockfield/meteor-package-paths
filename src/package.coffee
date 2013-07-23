@@ -63,7 +63,6 @@ module.exports =
     lines = lines.filter (line) ->
       return false if line.has(/api.add_files/)
       return false if line.has(new RegExp(js.GENERATED_HEADER))
-      return false if line.has(new RegExp(js.GENERATED_TIME_STAMP))
       true
     lines = filterWithinOnUse lines, (line) -> not line.isBlank()
 
@@ -80,7 +79,6 @@ module.exports =
 
     addLine()
     addLine("  #{ js.GENERATED_HEADER }")
-    addLine("  #{ js.GENERATED_TIME_STAMP } #{ new Date() }")
     for fileLine in js.addFiles(dir).trim().split('\n')
       addLine("  #{ fileLine.trim() }")
     addLine()

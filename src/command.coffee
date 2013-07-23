@@ -90,7 +90,6 @@ program
     console.log ''
 
 
-
 program
   .command('update')
   .description('Updates the [add_new] statements within the package.js file.')
@@ -102,6 +101,23 @@ program
       console.log 'No package.js file to update.'.red, 'Use [create] to create a new package.js file.'.grey
     console.log ''
 
+
+
+program
+  .command('update-all')
+  .description('Updates the package.js files within each child folder.')
+  .action (args) ->
+    dir = fsPath.resolve('.')
+    result = pkg.updateAll(dir)
+
+    if result.updated is 0
+      console.log 'No package.js files updated.'.red
+    else
+      console.log "Updated #{ result.updated } package.js files.".green
+      for key, item of result.folders
+        if item.updated
+          console.log " - #{ item.path }".grey
+    console.log ''
 
 
 

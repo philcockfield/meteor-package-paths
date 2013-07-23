@@ -90,6 +90,36 @@ module.exports =
     true
 
 
+  ###
+  Runs update on all child folders within the given directory.
+  @param dir: The directory that contains the folders to update.
+  @returns object containing results.
+  ###
+  updateAll: (dir) ->
+    # Setup initial conditions.
+    result =
+      total: 0
+      updated: 0
+      folders: {}
+
+    # Get the child folders.
+    paths = fs.readdirSync(dir).map (name) -> fsPath.join(dir, name)
+    paths = paths.filter (path) -> fs.statSync(path).isDirectory()
+
+    # Perform the update operations.
+    for path in paths
+      dirName        = fsPath.basename(path)
+      wasUpdated     = @update(path)
+      result.total   += 1
+      result.updated += 1 if wasUpdated
+      result.folders[dirName] =
+        updated: wasUpdated
+        path:    fsPath.join(path, 'package.js')
+
+    # Finish up.
+    result
+
+
 
 
 # PRIVATE --------------------------------------------------------------------------

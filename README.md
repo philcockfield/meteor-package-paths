@@ -23,7 +23,7 @@ To see the available commands, from within your package folder:
 To create a fresh `package.js` file with all the correct `api.add_files` entries:
 
     $ cd my-package
-    $ package create
+    $ package create 'My Package'
 
 To update an existing `package.js` file:
 

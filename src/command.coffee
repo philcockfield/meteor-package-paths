@@ -67,8 +67,8 @@ program
 
 program
   .command('js')
-  .description('Prints the [add_files] JavaScript to copy into your package.js')
-  .action (cmd, args) ->
+  .description('Prints the [add_files] JavaScript to copy into your package.js file')
+  .action (args) ->
     dir = fsPath.resolve('.')
     console.log 'package.js'.green, dir.grey
     console.log ''
@@ -79,41 +79,44 @@ program
 
 program
   .command('create')
-  .description('Creates a new package.js file.')
+  .usage('[options] <package summary>')
+  .description('Creates a new package.js file')
   .option('-f --force', 'Overrite existing files')
-  .action (args) ->
-    dir = fsPath.resolve('.')
-    if pkg.create(dir, args)
+  .action (summary, args) ->
+    args    = summary unless Object.isString(summary)
+    summary = null unless Object.isString(summary)
+    dir     = fsPath.resolve('.')
+    if pkg.create(dir, summary:summary, force:args.force)
       console.log 'Created package.js'.green
     else
-      console.log 'Cannot create package.js - file already exists.'.red
+      console.log 'Cannot create package.js - file already exists.'.red, 'Use the --force [-f] option to overrite.'.grey
     console.log ''
 
 
 program
   .command('update')
-  .description('Updates the [add_new] statements within the package.js file.')
+  .description('Updates the [add_new] statements within the package.js file')
   .action (args) ->
     dir = fsPath.resolve('.')
     if pkg.update(dir)
       console.log 'Updated package.js'.green
     else
-      console.log 'No package.js file to update.'.red, 'Use [create] to create a new package.js file.'.grey
+      console.log 'No package.js file to update.'.red, 'Use [create] to create a new package.js file'.grey
     console.log ''
 
 
 
 program
   .command('update-all')
-  .description('Updates the package.js files within each child folder.')
+  .description('Updates the package.js files within each child folder')
   .action (args) ->
     dir = fsPath.resolve('.')
     result = pkg.updateAll(dir)
 
     if result.updated is 0
-      console.log 'No package.js files updated.'.red
+      console.log 'No package.js files updated'.red
     else
-      console.log "Updated #{ result.updated } package.js files.".green
+      console.log "Updated #{ result.updated } package.js files".green
       for key, item of result.folders
         if item.updated
           console.log " - #{ item.path }".grey

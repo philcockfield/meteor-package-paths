@@ -9,13 +9,15 @@ module.exports =
   Creates a new package.js file.
   @param dir: The directory to create the package within.
   @param options:
-            - force: Flag indicating if the file should be overwritten.
+            - force:    Flag indicating if the file should be overwritten.
+            - summary:  The summary description of the package.
   @returns true if the package file was created, otherwise false.
   ###
   create: (dir, options = {}) ->
     # Setup initial conditions.
-    force = options.force is true
-    path  = fsPath.join(dir, 'package.js')
+    force   = options.force is true
+    summary = options.summary ? ''
+    path    = fsPath.join(dir, 'package.js')
     return false if fs.existsSync(path) and not force
 
     # Save the base template.
@@ -23,7 +25,7 @@ module.exports =
     tmpl =
       """
       Package.describe({
-        summary: ''
+        summary: '#{ summary }'
       });
 
 

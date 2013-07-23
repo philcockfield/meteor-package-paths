@@ -15,11 +15,27 @@ This module assumes you are structuring your package folders like this:
       /server
       /shared
 
-From within your package folder, generate the file listing for the `package.json` with:
+To see the available commands, from within your package folder:
 
-    package js
+    $ package --help
 
-This will emit the `api.add_files` listing for your package taking into account any
+
+To create a fresh `package.js` file with all the correct `api.add_files` entries:
+
+    $ package create
+
+To update an existing `package.js` file:
+
+    $ package update
+
+And to update your appo's entire set of packages:
+
+    $ cd my-app/packages
+    $ package update-all
+
+Note, this will not effect any packages that have been sym-linked into your app.
+
+Resulting `package.js` files will contain the `api.add_files` listing for your package taking into account any
 sprokets style comment directives you may have within any of the files.
 
 The default load order is deepest to shallowest.  Use the comment directives to override

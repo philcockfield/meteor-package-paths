@@ -50,11 +50,13 @@ module.exports =
 
   ###
   Updates the [add_new] statements within the package.js file.
+  @param dir: The directory to the package.js file resides within.
+  @returns true if the file was updated, or false if the file does not already exist.
   ###
   update: (dir) ->
     # Setup initial conditions.
     path = fsPath.join(dir, 'package.js')
-    return @create(dir) unless fs.existsSync(path)
+    return false unless fs.existsSync(path)
 
     # Get the package.js file as an array with all the [add_files] lines removed.
     lines = readFile(path)

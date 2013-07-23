@@ -96,8 +96,10 @@ program
   .description('Updates the [add_new] statements within the package.js file.')
   .action (args) ->
     dir = fsPath.resolve('.')
-    pkg.update(dir)
-    console.log 'Updated package.js'.green
+    if pkg.update(dir)
+      console.log 'Updated package.js'.green
+    else
+      console.log 'No package.js file to update.'.red, 'Use [create] to create a new package.js file.'.grey
     console.log ''
 
 

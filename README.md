@@ -77,7 +77,7 @@ For example, from the command line:
 
 
 #### Main
-Files named `main` will be ordered last.
+Files named `main` will be ordered last, deepest to shallowest.
 
 
 #### 'Where' Overrides

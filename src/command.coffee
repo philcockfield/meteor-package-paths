@@ -14,12 +14,15 @@ pkg     = require './package'
 ###
 Pretty prints a set of files.
 ###
-print = (files) ->
+print = (files, trimStart) ->
   for key, items of files
     if items.length > 0
       console.log " #{ key }:".blue
       for file in items
-        console.log '  File'.cyan, file.path
+        path = file.path
+        if trimStart
+          path = path.remove(new RegExp("^#{ trimStart }"))
+        console.log '  File'.cyan, path
       console.log ''
 
 
@@ -28,17 +31,19 @@ program
   .command('tree')
   .description('Shows the ordered list of files for the entire hierarchy under the given directory (deep)')
   .action (dir, args) ->
+    dir = fsPath.resolve(dir)
     console.log ''
     console.log 'Tree:'.red, dir.grey
-    print(api.tree(dir))
+    print(api.tree(dir), dir)
 
 program
   .command('directory')
   .description('Shows the ordered list of files under the given directory (shallow)')
   .action (dir, args) ->
+    dir = fsPath.resolve(dir)
     console.log ''
     console.log 'Directory:'.red, dir.grey
-    print(api.directory(dir))
+    print(api.directory(dir), dir)
 
 
 program

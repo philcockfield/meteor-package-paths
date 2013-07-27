@@ -1,7 +1,7 @@
 #=
 #= require ../child.coffee
 #= require ../child
-#= require ../../file2.coffee
+#= require ../../file2a.coffee
 #= require_directory ../
 #= require_tree ../
 #=

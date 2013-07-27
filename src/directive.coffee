@@ -57,8 +57,6 @@ module.exports = class Directive
         return if _cache[file.path]?
         _cache[file.path] = file
 
-        console.log '@isPath', @isPath, @type, @path
-
         # Ensure the file can be added.
         if @isPath
           throw new Error("The file for the directive [#{ @text }] does not exist [Path: #{ file.path }].") unless file.exists

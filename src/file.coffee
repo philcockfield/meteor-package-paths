@@ -162,17 +162,6 @@ toOrderedFiles = (paths, options = {}) ->
   paths = paths.filter (path) -> not fsPath.extname(path).isBlank() # Remove folder-only paths.
   files = paths.map (path) -> new File(path, options)
 
-  # for file in files
-  #   # console.log ' > '.green, file
-  #   if file.name is 'base_client'
-  #     # console.log 'file', file
-  #     console.log ''
-  #     for d in file.directives()
-  #       console.log 'directive'.red, d
-  #     console.log ''
-  #     console.log 'file.prereqs', file.prereqs
-  #     console.log ''
-
   # Partition paths into their execution domains.
   byDomain = (domain) -> files.filter (file) -> file.domain is domain
   result =

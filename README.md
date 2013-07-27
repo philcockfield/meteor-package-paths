@@ -43,6 +43,7 @@ Note, calling `update-all` will not effect any packages that have been sym-linke
 
 ## Load Order
 
+#### Path Directives
 The default load order is deepest to shallowest.  Use the comment directives to override
 this ordering:
 
@@ -59,6 +60,15 @@ For example:
     //= require file.js
     //= require_tree ../dir/foo
     //= require_directory ../dir/foo
+
+#### Base directives
+Files containing the `base` directive are ordered first, shallowest to deepest.  This is a
+reversal of the above rules and is useful for the common pattern of having base classes
+declared in parent folders, under which folders contianing the files of deriving classes reside.
+
+    #= base
+
+    //= base
 
 
 ## Testing from the Command Line

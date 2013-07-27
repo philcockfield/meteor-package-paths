@@ -1,8 +1,11 @@
 fsPath = require 'path'
 
-REQUIRE           = 'require'
-REQUIRE_TREE      = 'require_tree'
-REQUIRE_DIRECTORY = 'require_directory'
+REQUIRE               = 'require'
+REQUIRE_TREE          = 'require_tree'
+REQUIRE_DIRECTORY     = 'require_directory'
+BASE                  = 'base'
+SUPPORTED_DIRECTIVES  = [REQUIRE, REQUIRE_TREE, REQUIRE_DIRECTORY, BASE]
+PATH_DIRECTIVES       = [REQUIRE, REQUIRE_TREE, REQUIRE_DIRECTORY]
 
 
 createFile = (path, options) ->
@@ -25,8 +28,9 @@ module.exports = class Directive
     @files = []
 
     # Ensure the directive is valid.
-    @isValid = [REQUIRE, REQUIRE_TREE, REQUIRE_DIRECTORY].any (item) => item is @type
-    @isValid = false if @path.isBlank()
+    @isPath  = PATH_DIRECTIVES.any (item) => item is @type
+    @isValid = SUPPORTED_DIRECTIVES.any (item) => item is @type
+    @isValid = false if @isPath and @path.isBlank()
 
     # Format the path.
     if @isValid and @path.startsWith('.')
@@ -53,9 +57,12 @@ module.exports = class Directive
         return if _cache[file.path]?
         _cache[file.path] = file
 
+        console.log '@isPath', @isPath, @type, @path
+
         # Ensure the file can be added.
-        throw new Error("The file for the directive [#{ @text }] does not exist [Path: #{ file.path }].") unless file.exists
-        throw new Error("The file for the directive [#{ @text }] is not valid.") unless file.isValid()
+        if @isPath
+          throw new Error("The file for the directive [#{ @text }] does not exist [Path: #{ file.path }].") unless file.exists
+        throw new Error("The file for the directive [#{ @text }] is not valid.") unless file.isValid
         if file.domain isnt @file.domain
           throw new Error("The file for the directive [#{ @text }] is in the exeuction domain '#{ file.domain }' and cannot be added to the execution domain '#{ @file.domain }' of the file [#{ @file.path }]")
 

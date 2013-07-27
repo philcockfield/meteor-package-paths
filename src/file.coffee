@@ -7,10 +7,6 @@ CLIENT = 'client'
 SERVER = 'server'
 SHARED = 'shared'
 
-REQUIRE           = 'require'
-REQUIRE_TREE      = 'require_tree'
-REQUIRE_DIRECTORY = 'require_directory'
-
 SUPPORTED_EXTENSIONS = ['.js', '.coffee', '.html', '.css', '.styl']
 
 
@@ -32,11 +28,17 @@ module.exports = class File
     @domain    = executionDomain(@)
     @prereqs   = []
 
-    # Build the request list.
+    # Process directives.
     @_buildPrereqs() if (options.withPrereqs ? true)
+    @isBase = @directives().any (directive) -> directive.type is 'base'
+
+    # Finish up.
+    @isValid = @exists and @isFile
 
 
-  isValid:  -> @exists and @isFile
+  ###
+  Creates a string representation of the file.
+  ###
   toString: -> @path
 
 
@@ -160,9 +162,16 @@ toOrderedFiles = (paths, options = {}) ->
   paths = paths.filter (path) -> not fsPath.extname(path).isBlank() # Remove folder-only paths.
   files = paths.map (path) -> new File(path, options)
 
-  for file in files
-    console.log ' > '.green, file
-    console.log ''
+  # for file in files
+  #   # console.log ' > '.green, file
+  #   if file.name is 'base_client'
+  #     # console.log 'file', file
+  #     console.log ''
+  #     for d in file.directives()
+  #       console.log 'directive'.red, d
+  #     console.log ''
+  #     console.log 'file.prereqs', file.prereqs
+  #     console.log ''
 
   # Partition paths into their execution domains.
   byDomain = (domain) -> files.filter (file) -> file.domain is domain
@@ -174,6 +183,7 @@ toOrderedFiles = (paths, options = {}) ->
   # Process paths.
   process = (files) ->
     files = sortDeepest(files)
+    files = putBaseFirst(files)
     files = withPrereqs(files) if options.withPrereqs
     files = files.unique (file) -> file.path
     files = putHtmlFirst(files)
@@ -215,6 +225,13 @@ sortDeepest = (files) ->
   result
 
 
+putBaseFirst = (files) ->
+  baseFiles = files.filter (file) -> file.isBase
+  baseFiles = baseFiles.reverse() # Shallowest to deepest (files have been pre-ordered).
+  files = files.filter (file) -> not file.isBase
+  files.add(baseFiles, 0)
+
+
 
 withPrereqs = (files) ->
   result = []
@@ -222,7 +239,6 @@ withPrereqs = (files) ->
     result.add(new File(path)) for path in file.prereqs
     result.add(file)
   result
-
 
 
 putHtmlFirst = (files) ->
@@ -234,7 +250,7 @@ putHtmlFirst = (files) ->
 
 
 putMainLast = (files) ->
-  mainFiles  = files.filter (file) -> file.name is 'main'
+  mainFiles = files.filter (file) -> file.name is 'main'
   files = files.filter (file) -> file.name isnt 'main'
   files.add(mainFiles)
   files

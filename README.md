@@ -67,8 +67,13 @@ reversal of the above rules and is useful for the common pattern of having base 
 declared in parent folders, under which folders contianing the files of deriving classes reside.
 
     #= base
-
     //= base
+
+#### Exclusions
+To exclude a file:
+
+    #= exclude
+
 
 
 ## Testing from the Command Line

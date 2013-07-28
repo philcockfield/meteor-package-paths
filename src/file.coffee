@@ -30,7 +30,9 @@ module.exports = class File
 
     # Process directives.
     @_buildPrereqs() if (options.withPrereqs ? true)
-    @isBase = @directives().any (directive) -> directive.type is 'base'
+    directives = @directives()
+    @isBase    = directives.any (directive) -> directive.type is 'base'
+    @isExclude = directives.any (directive) -> directive.type is 'exclude'
 
     # Finish up.
     @isValid = @exists and @isFile
@@ -161,6 +163,7 @@ toOrderedFiles = (paths, options = {}) ->
   options.withPrereqs ?= true
   paths = paths.filter (path) -> not fsPath.extname(path).isBlank() # Remove folder-only paths.
   files = paths.map (path) -> new File(path, options)
+  files = files.filter (file) -> not file.isExclude
 
   # Partition paths into their execution domains.
   byDomain = (domain) -> files.filter (file) -> file.domain is domain

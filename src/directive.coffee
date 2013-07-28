@@ -4,15 +4,11 @@ REQUIRE               = 'require'
 REQUIRE_TREE          = 'require_tree'
 REQUIRE_DIRECTORY     = 'require_directory'
 BASE                  = 'base'
-SUPPORTED_DIRECTIVES  = [REQUIRE, REQUIRE_TREE, REQUIRE_DIRECTORY, BASE]
+EXCLUDE               = 'exclude'
+SUPPORTED_DIRECTIVES  = [REQUIRE, REQUIRE_TREE, REQUIRE_DIRECTORY, BASE, EXCLUDE]
 PATH_DIRECTIVES       = [REQUIRE, REQUIRE_TREE, REQUIRE_DIRECTORY]
 
 
-createFile = (path, options) ->
-    # NB: Require statement here because [File] has a reference
-    #     to [Directive], so cannot be loaded at the time the file is parsed
-    File = require('./file')
-    return new File(path, options)
 
 
 
@@ -73,9 +69,12 @@ module.exports = class Directive
         # Add the given file.
         result.push(file)
 
+    # NB: Require statement here because [File] has a reference
+    #     to [Directive], so cannot be loaded at the time the file is parsed
+    File = require './file'
 
     switch @type
-      when REQUIRE            then add(createFile(@path, withPrereqs:false))
+      when REQUIRE            then add(new File(@path, withPrereqs:false))
       when REQUIRE_DIRECTORY  then addFiles File.directory(@path, withPrereqs:false)[@file.domain]
       when REQUIRE_TREE       then addFiles File.tree(@path, withPrereqs:false)[@file.domain]
 

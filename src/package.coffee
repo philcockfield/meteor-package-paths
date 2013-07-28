@@ -9,16 +9,25 @@ module.exports =
   Creates a new package.js file.
   @param dir: The directory to create the package within.
   @param options:
-            - force:    Flag indicating if the file should be overwritten.
             - summary:  The summary description of the package.
+            - force:    Flag indicating if the file should be overwritten.
+            - withDirs: Flag indicating if the [client/server/shared] directories should be created.
   @returns true if the package file was created, otherwise false.
   ###
   create: (dir, options = {}) ->
     # Setup initial conditions.
-    force   = options.force is true
-    summary = options.summary ? ''
-    path    = fsPath.join(dir, 'package.js')
+    summary   = options.summary ? ''
+    force     = options.force is true
+    withDirs  = options.withDirs is true
+    path      = fsPath.join(dir, 'package.js')
     return false if fs.existsSync(path) and not force
+
+    # Add the [client/server/shared] directories.
+    if withDirs
+      createDir(dir, 'client')
+      createDir(dir, 'server')
+      createDir(dir, 'shared')
+
 
     # Save the base template.
     add_files = js.addFiles(dir).trim()
@@ -39,7 +48,6 @@ module.exports =
       });
 
       """
-
     fs.writeFileSync(path, tmpl)
 
     # Insert the "add_files" block.
@@ -135,6 +143,12 @@ module.exports =
 readFile = (path) ->
   text = fs.readFileSync(path).toString()
   text.split('\n')
+
+
+createDir = (base, name) ->
+  path = fsPath.join(base, name)
+  fs.mkdirSync(path) unless fs.existsSync(path)
+
 
 
 isFunctionEnd = (line) -> line.has /\}\)\;/

@@ -87,11 +87,12 @@ program
   .usage('[options] <package summary>')
   .description('Creates a new package.js file')
   .option('-f --force', 'Overrite existing files')
+  .option('-d --dirs', 'Create the [client/server/shared] directories if they do not exist')
   .action (summary, args) ->
     args    = summary unless Object.isString(summary)
     summary = null unless Object.isString(summary)
     dir     = fsPath.resolve('.')
-    if pkg.create(dir, summary:summary, force:args.force)
+    if pkg.create(dir, summary:summary, force:args.force, withDirs:args.dirs)
       console.log 'Created package.js'.green
     else
       console.log 'Cannot create package.js - file already exists.'.red, 'Use the --force [-f] option to overrite.'.grey

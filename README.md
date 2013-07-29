@@ -14,6 +14,7 @@ This module assumes you are structuring your package folders like this:
       /client
       /server
       /shared
+      /images
 
 To see the available commands, from within your package folder:
 
@@ -73,6 +74,14 @@ declared in parent folders, under which folders contianing the files of deriving
 To exclude a file:
 
     #= exclude
+
+
+#### Exclusions
+Images can be placed anywhere within the folder structure, and they are only added
+to the `client`.  By convention, images are typically stored under:
+
+    /my-package
+      /images
 
 
 

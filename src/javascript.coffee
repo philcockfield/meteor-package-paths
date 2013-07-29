@@ -31,6 +31,8 @@ module.exports =
         line = "  api.add_files('#{ path }', #{ where });\n"
         result += line
 
+    printLine = -> result += '\n'
+
     print = (dir) ->
       dir = "#{ packageDir }/#{ dir }"
       if fs.existsSync(dir)
@@ -40,8 +42,9 @@ module.exports =
         printFiles(tree.server, ['server'])
 
     print 'shared'
-    print 'client'
     print 'server'
+    print 'client'
+    print 'images'
 
     # Finish up.
     result

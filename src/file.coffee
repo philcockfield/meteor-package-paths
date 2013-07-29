@@ -7,7 +7,12 @@ CLIENT = 'client'
 SERVER = 'server'
 SHARED = 'shared'
 
-SUPPORTED_EXTENSIONS = ['.js', '.coffee', '.html', '.css', '.styl']
+CODE_EXTENSIONS      = ['.js', '.coffee']
+STYLE_EXTENSIONS     = ['.css', '.styl']
+HTML_EXTENSIONS      = ['.html', '.htm']
+IMAGE_EXTENSIONS     = ['.jpg', '.jpeg', '.png', '.svg']
+SUPPORTED_EXTENSIONS = [].union(CODE_EXTENSIONS, STYLE_EXTENSIONS, HTML_EXTENSIONS, IMAGE_EXTENSIONS)
+
 
 
 ###
@@ -25,8 +30,17 @@ module.exports = class File
     @dir       = fsPath.dirname(@path)
     @extension = fsPath.extname(@path)
     @name      = fsPath.basename(@path).remove(new RegExp("#{ @extension }$"))
-    @domain    = executionDomain(@)
     @prereqs   = []
+
+    # File type flags.
+    hasExtension = (extensions) => extensions.any (ext) => ext is @extension
+    @isCode  = hasExtension CODE_EXTENSIONS
+    @isStyle = hasExtension STYLE_EXTENSIONS
+    @isHtml  = hasExtension HTML_EXTENSIONS
+    @isImage = hasExtension IMAGE_EXTENSIONS
+
+    # Determine where the file is executed (client/server/shared).
+    @domain = executionDomain(@)
 
     # Process directives.
     @_buildPrereqs() if (options.withPrereqs ? true)
@@ -135,6 +149,8 @@ fileExists = (file, files) -> files.any (item) -> item.path is file.path
 
 
 executionDomain = (file) ->
+  return CLIENT if file.isImage
+
   # Find the last reference within the path to an execution domain.
   for part in file.path.split('/').reverse()
     return CLIENT if part is CLIENT

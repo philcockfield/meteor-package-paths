@@ -120,7 +120,7 @@ program
   .description('Updates the package.js files within each child folder')
   .action (args) ->
     dir = fsPath.resolve('.')
-    console.log 'Update Packages'.blue, 'in folder'.grey, dir.grey
+    console.log 'Update Packages'.blue, 'in folder'.grey, dir.cyan
     result = pkg.updateAll(dir)
 
     if result.total is 0

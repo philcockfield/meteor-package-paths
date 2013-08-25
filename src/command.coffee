@@ -120,18 +120,23 @@ program
   .description('Updates the package.js files within each child folder')
   .action (args) ->
     dir = fsPath.resolve('.')
+    console.log 'Update Packages'.blue, 'in folder'.grey, dir.grey
     result = pkg.updateAll(dir)
 
     if result.total is 0
       console.log 'No package.js files available to update'.grey
     else
-      console.log "Updated #{ result.updated } files:".green
-      for key, item of result.folders
-        path = item.path.remove(new RegExp("^#{ dir }"))
-        if item.updated
-          console.log ' -'.grey, 'Updated'.green, " #{ path }".grey
-        else
-          console.log ' -'.grey, 'Already up-to-date'.red, " #{ path }".grey
+      totalFiles = result.updated
+      if totalFiles is 0
+        console.log "No files changed.".grey
+      else
+        console.log "Updated #{ totalFiles } files:".green
+        for key, item of result.folders
+          path = item.path.remove(new RegExp("^#{ dir }"))
+          if item.updated
+            console.log ' -'.grey, 'Updated'.green, " #{ path }".grey
+          else
+            console.log ' -'.grey, 'Already up-to-date'.red, " #{ path }".grey
     console.log ''
 
 

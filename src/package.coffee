@@ -40,10 +40,10 @@ module.exports =
 
 
       Package.on_use(function (api) {
-        api.use('coffeescript');
-        api.use('sugar');
         api.use('http', ['client', 'server']);
         api.use('templating', 'client');
+        api.use('coffeescript');
+        api.use('sugar');
         api.use('core');
       });
 
@@ -113,6 +113,7 @@ module.exports =
     result =
       total: 0
       updated: 0
+      path: dir
       folders: {}
 
     # Get the child folders.

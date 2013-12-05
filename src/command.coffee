@@ -31,6 +31,7 @@ program
   .command('tree')
   .description('Shows the ordered list of files for the entire hierarchy under the given directory (deep)')
   .action (dir, args) ->
+    dir = './' unless Object.isString(dir)
     dir = fsPath.resolve(dir)
     console.log ''
     console.log 'Tree:'.red, dir.grey
@@ -135,8 +136,8 @@ program
           path = item.path.remove(new RegExp("^#{ dir }"))
           if item.updated
             console.log ' -'.grey, 'Updated'.green, " #{ path }".grey
-          else
-            console.log ' -'.grey, 'Already up-to-date'.red, " #{ path }".grey
+          # else
+          #   console.log ' -'.grey, 'Already up-to-date'.red, " #{ path }".grey
     console.log ''
 
 

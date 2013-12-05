@@ -10,9 +10,8 @@ SHARED = 'shared'
 CODE_EXTENSIONS      = ['.js', '.coffee']
 STYLE_EXTENSIONS     = ['.css', '.styl']
 HTML_EXTENSIONS      = ['.html', '.htm']
-IMAGE_EXTENSIONS     = ['.jpg', '.jpeg', '.png', '.svg']
+IMAGE_EXTENSIONS     = ['.jpg', '.jpeg', '.png', '.svg', '.swf']
 SUPPORTED_EXTENSIONS = [].union(CODE_EXTENSIONS, STYLE_EXTENSIONS, HTML_EXTENSIONS, IMAGE_EXTENSIONS)
-
 
 
 ###
@@ -40,7 +39,11 @@ module.exports = class File
     @isImage = hasExtension IMAGE_EXTENSIONS
 
     # Determine where the file is executed (client/server/shared).
-    @domain = executionDomain(@)
+    @domain = executionDomain(@path)
+
+    # Determine if the file type is an server asset.
+    if @isFile and @domain is SERVER
+      @isAsset = true unless hasExtension(CODE_EXTENSIONS)
 
     # Process directives.
     @_buildPrereqs() if (options.withPrereqs ? true)
@@ -148,11 +151,9 @@ fileExists = (file, files) -> files.any (item) -> item.path is file.path
 
 
 
-executionDomain = (file) ->
-  return CLIENT if file.isImage
-
+executionDomain = (filePath) ->
   # Find the last reference within the path to an execution domain.
-  for part in file.path.split('/').reverse()
+  for part in filePath.split('/').reverse()
     return CLIENT if part is CLIENT
     return SERVER if part is SERVER
     return SHARED if part is SHARED
@@ -170,8 +171,17 @@ readdir = (dir, deep) ->
   else
     paths = fs.readdirSync(dir)
   paths = paths.map (path) -> "#{ dir }/#{ path }"
-  paths = paths.filter (path) -> SUPPORTED_EXTENSIONS.any (ext) -> fsPath.extname(path) is ext
+  paths = paths.filter (path) -> isSupported(path)
   paths
+
+
+isSupported = (path) ->
+  if isServer = executionDomain(path) is SERVER
+    # All files are supported on the server.
+    # They are set as { isAsset:true } if they are note JS or CSS.
+    return true
+  else
+    SUPPORTED_EXTENSIONS.any (ext) -> fsPath.extname(path) is ext
 
 
 

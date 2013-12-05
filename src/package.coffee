@@ -116,10 +116,18 @@ module.exports =
       path: dir
       folders: {}
 
+
+    filter = (path) ->
+      try
+        isDirectory = fs.statSync(path).isDirectory()
+        isSynLink = fs.lstatSync(path).isSymbolicLink()
+      catch e
+        console.log "WARNING Problem with the path: #{ path }".red
+
     # Get the child folders.
     paths = fs.readdirSync(dir).map (name) -> fsPath.join(dir, name)
-    paths = paths.filter (path) ->  fs.statSync(path).isDirectory()
-    paths = paths.filter (path) ->  not fs.lstatSync(path).isSymbolicLink()
+    paths = paths.filter (path) -> filter(path)
+    # paths = paths.filter (path) ->  not fs.lstatSync(path).isSymbolicLink()
 
     # Perform the update operations.
     for path in paths

@@ -17,24 +17,8 @@ module.exports =
 
     printFiles = (files, whereParam) ->
       for file in files
-        # path = file.path
-        # path = path.remove(new RegExp("^#{ packageDir }/"))
-
-        # where = ''
-        # for item in whereParam
-        #   where += "'#{ item }', "
-
-        # where = where.remove(/, $/)
-        # where = "[#{ where }]" if whereParam.length > 1
-
-        # options = ''
-        # if file.isAsset
-        #   options = ', { isAsset:true }'
-
-        # line = "  api.add_files('#{ path }', #{ where }#{ options });\n"
         result += file.toAddFilesJavascript(packageDir)
 
-    # printLine = -> result += '\n'
 
     print = (dir) ->
       dir = "#{ packageDir }/#{ dir }"

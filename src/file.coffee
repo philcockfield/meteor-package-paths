@@ -55,10 +55,58 @@ module.exports = class File
     @isValid = @exists and @isFile
 
 
+
   ###
   Creates a string representation of the file.
   ###
   toString: -> @path
+
+
+
+  ###
+  Generates the "api.add_files" line of JS.
+  @param packageDir: The directory path to the package.
+  @returns string of javascript code.
+  ###
+  toAddFilesJavascript: (packageDir) ->
+    path = @path
+    path = path.remove(new RegExp("^#{ packageDir }/"))
+
+    formatWhere = (where) ->
+        where = [where] unless Object.isArray(where)
+        result = ''
+        for item in where
+          result += "'#{ item }', "
+        result = result.remove(/, $/)
+        result = "[#{ result }]" if where.length > 1
+        result
+
+    toLine = (where, isAsset) ->
+        where = formatWhere(where)
+        options = ''
+        options = ', { isAsset:true }' if isAsset
+        line = "  api.add_files('#{ path }', #{ where }#{ options });\n"
+
+
+
+    switch @domain
+      when CLIENT then toLine('client', @isAsset)
+      when SERVER then toLine('server', @isAsset)
+      when SHARED
+
+        if @isStyle
+          # Style-sheets that are in 'shared' get two entries, one on the client,
+          # and the other on the server as an asset { isAsset:true }.
+          result = ''
+          result += toLine('client', false)
+          result += toLine('server', true)
+          result
+
+        else
+          toLine(['client', 'server'], @isAsset)
+
+
+
 
 
   ###
@@ -198,6 +246,11 @@ toOrderedFiles = (paths, options = {}) ->
     server: byDomain('server')
     shared: byDomain('shared')
 
+  # Put "shared" CSS files as two distinct entries:
+  #  - client
+  #  - server { isAsset:true }
+  # processCssFiles(result)
+
   # Process paths.
   process = (files) ->
     files = sortDeepest(files)
@@ -213,6 +266,16 @@ toOrderedFiles = (paths, options = {}) ->
 
   # Finish up.
   result
+
+
+# processCssFiles = (byDomain) ->
+#   # Put "shared" CSS files as two distinct entries:
+#   #  - client
+#   #  - server { isAsset:true }
+
+#   for file in byDomain.shared
+#     console.log ' > file',  file
+
 
 
 

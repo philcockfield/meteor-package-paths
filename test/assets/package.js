@@ -12,6 +12,8 @@ Package.on_use(function (api) {
   api.use('core');
 
   // Generated with: github.com/philcockfield/meteor-package-loader
+  api.add_files('shared/css.styl', 'client');
+  api.add_files('shared/css.styl', 'server', { isAsset:true });
   api.add_files('server/circle.png', 'server', { isAsset:true });
   api.add_files('server/sample.coffee', 'server');
   api.add_files('server/sample.jade', 'server', { isAsset:true });

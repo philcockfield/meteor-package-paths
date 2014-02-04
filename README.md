@@ -34,7 +34,7 @@ To update an existing `package.js` file:
 The resulting `package.js` file will contain the `api.add_files` listing for your package taking into account any
 sprokets style comment directives you may have within any of the files.
 
-And to update your appo's entire set of packages:
+And to update your app's entire set of packages:
 
     $ cd my-app/packages
     $ package update-all

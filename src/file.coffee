@@ -10,7 +10,7 @@ SHARED = 'shared'
 CODE_EXTENSIONS      = ['.js', '.coffee']
 STYLE_EXTENSIONS     = ['.css', '.styl']
 HTML_EXTENSIONS      = ['.html', '.htm']
-IMAGE_EXTENSIONS     = ['.jpg', '.jpeg', '.png', '.svg', '.swf']
+IMAGE_EXTENSIONS     = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.swf']
 SUPPORTED_EXTENSIONS = [].union(CODE_EXTENSIONS, STYLE_EXTENSIONS, HTML_EXTENSIONS, IMAGE_EXTENSIONS)
 
 

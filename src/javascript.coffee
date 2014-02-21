@@ -1,5 +1,5 @@
-fs     = require 'fs'
-File   = require './file'
+fs   = require 'fs'
+File = require './file'
 
 
 
@@ -19,7 +19,6 @@ module.exports =
       for file in files
         result += file.toAddFilesJavascript(packageDir)
 
-
     print = (dir) ->
       dir = "#{ packageDir }/#{ dir }"
       if fs.existsSync(dir)
@@ -32,6 +31,7 @@ module.exports =
     print 'server'
     print 'client'
     print 'images'
+    print 'private'
 
     # Finish up.
     result

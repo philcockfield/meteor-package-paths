@@ -22,7 +22,13 @@ print = (files, trimStart) ->
         path = file.path
         if trimStart
           path = path.remove(new RegExp("^#{ trimStart }"))
-        console.log '  File'.cyan, path
+
+        suffix = ''
+        if file.isAsset
+          suffix = '(asset)'.grey
+
+
+        console.log '  File'.cyan, path, suffix
       console.log ''
 
 

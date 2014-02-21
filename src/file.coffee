@@ -3,22 +3,24 @@ fsPath    = require 'path'
 wrench    = require 'wrench'
 Directive = require './directive'
 
-CLIENT = 'client'
-SERVER = 'server'
-SHARED = 'shared'
+CLIENT    = 'client'
+SERVER    = 'server'
+SHARED    = 'shared'
+PRIVATE   = 'private'
 
-CODE_EXTENSIONS      = ['.js', '.coffee']
-STYLE_EXTENSIONS     = ['.css', '.styl']
-HTML_EXTENSIONS      = ['.html', '.htm']
-IMAGE_EXTENSIONS     = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.swf']
-SUPPORTED_EXTENSIONS = [].union(CODE_EXTENSIONS, STYLE_EXTENSIONS, HTML_EXTENSIONS, IMAGE_EXTENSIONS)
-
+CODE_EXTENSIONS         = ['.js', '.coffee']
+STYLE_EXTENSIONS        = ['.css', '.styl']
+HTML_EXTENSIONS         = ['.html', '.htm']
+IMAGE_EXTENSIONS        = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.swf']
+SUPPORTED_EXTENSIONS    = [].union(CODE_EXTENSIONS, STYLE_EXTENSIONS, HTML_EXTENSIONS, IMAGE_EXTENSIONS)
+UNSUPPORTED_EXTENSIONS  = [ '.DS_Store' ]
 
 ###
 Represents a single file.
 ###
 module.exports = class File
   constructor: (@path, options = {}) ->
+
     # Setup initial conditions.
     @path = fsPath.resolve(@path)
     @exists = fs.existsSync(path)
@@ -30,6 +32,7 @@ module.exports = class File
     @extension = fsPath.extname(@path)
     @name      = fsPath.basename(@path).remove(new RegExp("#{ @extension }$"))
     @prereqs   = []
+    @isPrivate = @path.indexOf('/private/') isnt -1
 
     # File type flags.
     hasExtension = (extensions) => extensions.any (ext) => ext is @extension
@@ -44,6 +47,7 @@ module.exports = class File
     # Determine if the file type is an server asset.
     if @isFile and @domain is SERVER
       @isAsset = true unless hasExtension(CODE_EXTENSIONS)
+      @isAsset = true if @isPrivate
 
     # Process directives.
     @_buildPrereqs() if (options.withPrereqs ? true)
@@ -203,7 +207,7 @@ executionDomain = (filePath) ->
   # Find the last reference within the path to an execution domain.
   for part in filePath.split('/').reverse()
     return CLIENT if part is CLIENT
-    return SERVER if part is SERVER
+    return SERVER if part is SERVER or part is PRIVATE
     return SHARED if part is SHARED
 
   SHARED # No execution domain found - default to 'shared'.
@@ -224,10 +228,10 @@ readdir = (dir, deep) ->
 
 
 isSupported = (path) ->
-  if isServer = executionDomain(path) is SERVER
+  if executionDomain(path) is SERVER
     # All files are supported on the server.
     # They are set as { isAsset:true } if they are note JS or CSS.
-    true
+    true unless UNSUPPORTED_EXTENSIONS.any (ext) -> fsPath.extname(path) is ext
   else
     SUPPORTED_EXTENSIONS.any (ext) -> fsPath.extname(path) is ext
 
@@ -239,12 +243,14 @@ toOrderedFiles = (paths, options = {}) ->
   files = paths.map (path) -> new File(path, options)
   files = files.filter (file) -> not file.isExclude and file.isValid
 
+
   # Partition paths into their execution domains.
   byDomain = (domain) -> files.filter (file) -> file.domain is domain
   result =
-    client: byDomain('client')
-    server: byDomain('server')
-    shared: byDomain('shared')
+    client:   byDomain('client')
+    server:   byDomain('server')
+    shared:   byDomain('shared')
+    private:  byDomain('private')
 
   # Put "shared" CSS files as two distinct entries:
   #  - client
@@ -266,15 +272,6 @@ toOrderedFiles = (paths, options = {}) ->
 
   # Finish up.
   result
-
-
-# processCssFiles = (byDomain) ->
-#   # Put "shared" CSS files as two distinct entries:
-#   #  - client
-#   #  - server { isAsset:true }
-
-#   for file in byDomain.shared
-#     console.log ' > file',  file
 
 
 

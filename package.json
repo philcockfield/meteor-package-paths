@@ -1,17 +1,17 @@
 {
   "name": "meteor-package-loader",
-  "version": "0.0.22",
+  "version": "0.0.24",
   "homepage": "https://github.com/philcockfield/meteor-package-loader",
   "engines": [ "node >=0.8.0" ],
   "description": "Provides sprockets style loading of files for a Meteor package.",
   "author": "Phil Cockfield (https://github.com/philcockfield)",
   "dependencies":
   {
-    "coffee-script": ">=1.6.3",
-    "sugar": ">=1.3.8",
-    "wrench": ">=1.5.1",
+    "coffee-script": "1.7.1",
+    "sugar": "1.4.1",
+    "wrench": "1.5.1",
     "colors": "0.6.0-1",
-    "commander": ">= 0.5.0"
+    "commander": "0.5.0"
   },
   "repository":
   {

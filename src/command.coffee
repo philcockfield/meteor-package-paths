@@ -2,11 +2,11 @@
 require 'colors'
 require 'sugar'
 
-fs     = require 'fs'
-fsPath = require 'path'
+fs      = require 'fs'
+fsPath  = require 'path'
 program = require 'commander'
 
-api     = require('./api')
+api     = require './api'
 js      = require './javascript'
 pkg     = require './package'
 
@@ -27,9 +27,9 @@ print = (files, trimStart) ->
         if file.isAsset
           suffix = '(asset)'.grey
 
-
         console.log '  File'.cyan, path, suffix
       console.log ''
+
 
 
 

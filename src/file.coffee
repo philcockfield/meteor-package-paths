@@ -7,6 +7,7 @@ CLIENT    = 'client'
 SERVER    = 'server'
 SHARED    = 'shared'
 PRIVATE   = 'private'
+TESTS     = 'tests'
 
 CODE_EXTENSIONS         = ['.js', '.coffee']
 STYLE_EXTENSIONS        = ['.css', '.styl']
@@ -20,7 +21,6 @@ Represents a single file.
 ###
 module.exports = class File
   constructor: (@path, options = {}) ->
-
     # Setup initial conditions.
     @path = fsPath.resolve(@path)
     @exists = fs.existsSync(path)
@@ -209,6 +209,8 @@ executionDomain = (filePath) ->
     return CLIENT if part is CLIENT
     return SERVER if part is SERVER or part is PRIVATE
     return SHARED if part is SHARED
+    if part is TESTS
+      console.log 'TESTS'
 
   SHARED # No execution domain found - default to 'shared'.
 

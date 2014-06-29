@@ -47,6 +47,14 @@ module.exports =
         api.use('core');
       });
 
+
+
+      Package.on_test(function (api) {
+        api.use(['tinytest', 'coffeescript']);
+        api.use(['templating', 'ui', 'spacebars'], 'client');
+        // api.use(''); // Package name in [smart.json]
+      });
+
       """
     fs.writeFileSync(path, tmpl)
 
@@ -69,11 +77,16 @@ module.exports =
     return false unless fs.existsSync(path)
 
     # Get the package.js file as an array with all the [add_files] lines removed.
+
     lines = readFile(path)
     lines = lines.filter (line) ->
-      return false if line.has(/api.add_files/)
-      return false if line.has(new RegExp(js.GENERATED_HEADER))
-      true
+                # NB: Don't alter tests files.
+                return true  if line.trim().startsWith("api.add_files('tests/")
+
+                return false if line.has(/api.add_files/)
+                return false if line.has(new RegExp(js.GENERATED_HEADER))
+                true
+
     lines = filterWithinOnUse lines, (line) -> not line.isBlank()
 
     # Get the insertion point.

@@ -115,6 +115,9 @@ For example, you could override the `shared` folder, declaring some `client`-onl
         template.html
 
 
+#### Package tests
+Use the same `client` / `server` / `shared` folder structure within a `tests` directory
+to have the test files output within the package's `Package.on_test` declaration block.
 
 
 

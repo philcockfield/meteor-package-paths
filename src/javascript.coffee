@@ -9,18 +9,18 @@ module.exports =
   ###
   Generates the block of 'add_files' JS statements for
   the package.js file.
-  @param packageDir: The directory path to the package.
+  @param rootDir: The directory path to the package.
   @returns string of javascript code.
   ###
-  addFiles: (packageDir) ->
+  addFiles: (rootDir) ->
     result = ''
 
     printFiles = (files, whereParam) ->
       for file in files
-        result += file.toAddFilesJavascript(packageDir)
+        result += file.toAddFilesJavascript(rootDir)
 
     print = (dir) ->
-      dir = "#{ packageDir }/#{ dir }"
+      dir = "#{ rootDir }/#{ dir }"
       if fs.existsSync(dir)
         tree = File.tree(dir)
         printFiles(tree.shared, ['client', 'server'])

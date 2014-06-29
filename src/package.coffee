@@ -73,46 +73,46 @@ module.exports =
   ###
   update: (dir) ->
     # Setup initial conditions.
-    path = fsPath.join(dir, 'package.js')
-    return false unless fs.existsSync(path)
+    packagePath = fsPath.join(dir, 'package.js')
+    return false unless fs.existsSync(packagePath)
 
     # Get the package.js file as an array with all the [add_files] lines removed.
-
-    lines = readFile(path)
+    lines = readFile(packagePath)
     lines = lines.filter (line) ->
-                # NB: Don't alter tests files.
-                return true  if line.trim().startsWith("api.add_files('tests/")
-
                 return false if line.has(/api.add_files/)
                 return false if line.has(new RegExp(js.GENERATED_HEADER))
                 true
 
-    lines = filterWithinOnUse lines, (line) -> not line.isBlank()
+    lines = filterWithin /Package.on_use/, lines, (line) -> not line.isBlank()
+    lines = filterWithin /Package.on_test/, lines, (line) -> not line.isBlank()
 
-    # Get the insertion point.
-    insertAt = getInsertionPoint(lines)
-    if insertAt < 0
-      throw new Error('Could not find an insertion location for the "add_files" methods.')
+    insertLines = (withinFuncRegex, path) ->
+            # Get the insertion point.
+            insertAt = getInsertionPoint(withinFuncRegex, lines)
+            if insertAt < 0
+              throw new Error('Could not find an insertion location for the "add_files" methods.')
 
+            # Insert the "add_files" statements.
+            addLine = (text = '') ->
+              lines.add(text, insertAt)
+              insertAt += 1
 
-    # Insert the "add_files" statements.
-    addLine = (text = '') ->
-      lines.add(text, insertAt)
-      insertAt += 1
+            addLine()
+            addLine("  #{ js.GENERATED_HEADER }")
+            for fileLine in js.addFiles(path).trim().split('\n')
+              addLine("  #{ fileLine.trim() }")
+            addLine()
 
-    addLine()
-    addLine("  #{ js.GENERATED_HEADER }")
-    for fileLine in js.addFiles(dir).trim().split('\n')
-      addLine("  #{ fileLine.trim() }")
-    addLine()
+    insertLines(/Package.on_use/, dir)
+    insertLines(/Package.on_test/, fsPath.join(dir, 'tests'))
 
     # Determine if the resulting package.js is different.
     newPackage = lines.join('\n')
-    currentPackage = readFile(path).join('\n')
+    currentPackage = readFile(packagePath).join('\n')
     return false if (newPackage is currentPackage)
 
     # Finish up.
-    fs.writeFileSync(path, newPackage)
+    fs.writeFileSync(packagePath, newPackage)
     true
 
 
@@ -175,12 +175,12 @@ createDir = (base, name) ->
 
 
 isFunctionEnd = (line) -> line.has /\}\)\;/
-isFunctionOnUse = (line) -> line.has /Package.on_use/
+# isFunctionOnUse = (line) -> line.has /Package.on_use/
 
-filterWithinOnUse = (lines, func) ->
+filterWithin = (funcStartRegEx, lines, func) ->
   withinFunction = false
   lines.filter (line) ->
-    if isFunctionOnUse(line)
+    if line.has(funcStartRegEx)
       withinFunction = true
       return true
     withinFunction = false if withinFunction and isFunctionEnd(line)
@@ -189,10 +189,10 @@ filterWithinOnUse = (lines, func) ->
     else
       true
 
-getInsertionPoint = (lines) ->
+getInsertionPoint = (funcStartRegEx, lines) ->
   withinFunction = false
   for line, i in lines
-    withinFunction = true if isFunctionOnUse(line)
+    withinFunction = true if line.has(funcStartRegEx)
     if withinFunction
       return i if isFunctionEnd(line)
   -1 # Not found.

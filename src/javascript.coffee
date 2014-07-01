@@ -9,15 +9,16 @@ module.exports =
   ###
   Generates the block of 'add_files' JS statements for
   the package.js file.
-  @param rootDir: The directory path to the package.
+  @param rootDir:     The directory path to the package.
+  @param pathPrefix:  A prefix to prepend the path with.
   @returns string of javascript code.
   ###
-  addFiles: (rootDir) ->
+  addFiles: (rootDir, pathPrefix) ->
     result = ''
 
     printFiles = (files, whereParam) ->
       for file in files
-        result += file.toAddFilesJavascript(rootDir)
+        result += file.toAddFilesJavascript(rootDir, pathPrefix)
 
     print = (dir) ->
       dir = "#{ rootDir }/#{ dir }"

@@ -86,7 +86,7 @@ module.exports =
     lines = filterWithin /Package.on_use/, lines, (line) -> not line.isBlank()
     lines = filterWithin /Package.on_test/, lines, (line) -> not line.isBlank()
 
-    insertLines = (withinFuncRegex, path) ->
+    insertLines = (withinFuncRegex, path, prefix) ->
             # Get the insertion point.
             insertAt = getInsertionPoint(withinFuncRegex, lines)
             if insertAt < 0
@@ -99,12 +99,12 @@ module.exports =
 
             addLine()
             addLine("  #{ js.GENERATED_HEADER }")
-            for fileLine in js.addFiles(path).trim().split('\n')
+            for fileLine in js.addFiles(path, prefix).trim().split('\n')
               addLine("  #{ fileLine.trim() }")
             addLine()
 
     insertLines(/Package.on_use/, dir)
-    insertLines(/Package.on_test/, fsPath.join(dir, 'tests'))
+    insertLines(/Package.on_test/, fsPath.join(dir, 'tests'), 'tests/')
 
     # Determine if the resulting package.js is different.
     newPackage = lines.join('\n')

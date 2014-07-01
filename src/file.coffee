@@ -70,11 +70,13 @@ module.exports = class File
   ###
   Generates the "api.add_files" line of JS.
   @param packageDir: The directory path to the package.
+  @param pathPrefix:  A prefix to prepend the path with.
   @returns string of javascript code.
   ###
-  toAddFilesJavascript: (packageDir) ->
+  toAddFilesJavascript: (packageDir, prefixPath = '') ->
     path = @path
     path = path.remove(new RegExp("^#{ packageDir }/"))
+    path = "#{ prefixPath }#{ path }"
 
     formatWhere = (where) ->
         where = [where] unless Object.isArray(where)

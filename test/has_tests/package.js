@@ -23,6 +23,6 @@ Package.on_test(function (api) {
   // api.use(''); // Package name from [smart.json]
 
   // Generated with: github.com/philcockfield/meteor-package-loader
-  api.add_files('shared/spec.js', ['client', 'server']);
+  api.add_files('tests/shared/spec.js', ['client', 'server']);
 
 });

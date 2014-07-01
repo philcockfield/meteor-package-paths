@@ -89,8 +89,7 @@ module.exports =
     insertLines = (withinFuncRegex, path, prefix) ->
             # Get the insertion point.
             insertAt = getInsertionPoint(withinFuncRegex, lines)
-            if insertAt < 0
-              throw new Error('Could not find an insertion location for the "add_files" methods.')
+            return if insertAt < 0
 
             # Insert the "add_files" statements.
             addLine = (text = '') ->

@@ -43,8 +43,6 @@ module.exports =
         api.use('http', ['client', 'server']);
         api.use('templating', 'client');
         api.use('coffeescript');
-        api.use('sugar');
-        api.use('core');
       });
 
 
@@ -52,7 +50,6 @@ module.exports =
       Package.on_test(function (api) {
         api.use(['tinytest', 'coffeescript']);
         api.use(['templating', 'ui', 'spacebars'], 'client');
-        // api.use(''); // Package name in [smart.json]
       });
 
       """

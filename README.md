@@ -1,14 +1,14 @@
 # Meteor Package Loader
 Manages file paths for Meteor packages.
 
-File inclusion is handled automatically by Meteor for `apps`.  No so for packages
-which require explicit file inclusion references within the `package.js` file.
+File inclusion is handled automatically by Meteor for `apps`. Unfortunately this is not so for packages
+which have explicit file inclusion references within the `package.js` file.
 
-This package scans the folder strucutre of package automatically updating the
+This package scans the folder strucutre of your package(s) automatically updating the
 file inclusion paths within your `package.js` file.
 
-While it updates the `package.js` file, it is non-destructive and only changes
-the file paths, leaving all other references within `package.js` intact.
+While this tool updates the `package.js` file, it is non-destructive and only changes
+the file path references, leaving all other lines within `package.js` intact.
 
 Along with emulating the default Meteor file load order rules, this package
 provides [sprockets](https://github.com/sstephenson/sprockets) style overriding

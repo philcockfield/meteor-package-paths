@@ -1,9 +1,9 @@
 {
   "name": "meteor-package-paths",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "homepage": "https://github.com/philcockfield/meteor-package-paths",
   "engines": [ "node >=0.8.0" ],
-  "description": "Provides sprockets style loading of files for a Meteor package.",
+  "description": "Manages file paths for Meteor packages.",
   "author": "Phil Cockfield (https://github.com/philcockfield)",
   "dependencies":
   {

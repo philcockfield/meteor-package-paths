@@ -1,11 +1,16 @@
 # Meteor Package Loader
-Provides [sprockets](https://github.com/sstephenson/sprockets) style loading of files for a Meteor package.
+Manages file paths for Meteor packages.
+
+Along with emulating the default Meteor folder based load order, this package
+provides [sprockets](https://github.com/sstephenson/sprockets) style overriding
+of the load order of files within the `package.js` file.
+
 
 
 ## Installation
 Install globally so you can use the command line from any folder.
 
-    npm install -g meteor-package-loader
+    npm install -g meteor-package-paths
 
 ## Usage
 This module assumes you are structuring your package folders like this:

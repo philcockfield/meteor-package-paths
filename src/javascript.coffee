@@ -4,7 +4,7 @@ File = require './file'
 
 
 module.exports =
-  GENERATED_HEADER: '// Generated with: github.com/philcockfield/meteor-package-loader'
+  GENERATED_HEADER: '// Generated with: github.com/philcockfield/meteor-package-paths'
 
   ###
   Generates the block of 'add_files' JS statements for

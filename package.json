@@ -1,7 +1,7 @@
 {
-  "name": "meteor-package-loader",
+  "name": "meteor-package-paths",
   "version": "0.0.28",
-  "homepage": "https://github.com/philcockfield/meteor-package-loader",
+  "homepage": "https://github.com/philcockfield/meteor-package-paths",
   "engines": [ "node >=0.8.0" ],
   "description": "Provides sprockets style loading of files for a Meteor package.",
   "author": "Phil Cockfield (https://github.com/philcockfield)",
@@ -16,7 +16,7 @@
   "repository":
   {
     "type": "git",
-    "url": "https://github.com/philcockfield/meteor-package-loader.git"
+    "url": "https://github.com/philcockfield/meteor-package-paths.git"
   },
   "bin":
   {

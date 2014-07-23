@@ -11,7 +11,7 @@ Package.on_use(function (api) {
   api.use('templating', 'client');
   api.use('core');
 
-  // Generated with: github.com/philcockfield/meteor-package-loader
+  // Generated with: github.com/philcockfield/meteor-package-paths
   api.add_files('shared/template.html', ['client', 'server']);
   api.add_files('shared/file.coffee', ['client', 'server']);
   api.add_files('shared/client/template.html', 'client');

@@ -13,6 +13,6 @@ Package.on_use(function (api) {
 
   // Generated with: github.com/philcockfield/meteor-package-paths
   api.add_files('server/SERVER.md', 'server');
-  api.add_files('client/CLIENT.md', 'client');
+  api.add_files('client/CLIENT.md', 'server');
 
 });

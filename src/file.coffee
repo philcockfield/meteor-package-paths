@@ -13,7 +13,13 @@ CODE_EXTENSIONS         = ['.js', '.coffee']
 STYLE_EXTENSIONS        = ['.css', '.styl']
 HTML_EXTENSIONS         = ['.html', '.htm']
 IMAGE_EXTENSIONS        = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.swf']
-SUPPORTED_EXTENSIONS    = [].union(CODE_EXTENSIONS, STYLE_EXTENSIONS, HTML_EXTENSIONS, IMAGE_EXTENSIONS)
+MARKDOWN_EXTENSIONS     = ['.md', '.MD', '.markdown']
+
+SUPPORTED_EXTENSIONS    = [].union(CODE_EXTENSIONS,
+                                   STYLE_EXTENSIONS,
+                                   HTML_EXTENSIONS,
+                                   IMAGE_EXTENSIONS,
+                                   MARKDOWN_EXTENSIONS)
 UNSUPPORTED_EXTENSIONS  = [ '.DS_Store' ]
 
 ###
@@ -36,17 +42,18 @@ module.exports = class File
 
     # File type flags.
     hasExtension = (extensions) => extensions.any (ext) => ext is @extension
-    @isCode  = hasExtension CODE_EXTENSIONS
-    @isStyle = hasExtension STYLE_EXTENSIONS
-    @isHtml  = hasExtension HTML_EXTENSIONS
-    @isImage = hasExtension IMAGE_EXTENSIONS
+    @isCode     = hasExtension CODE_EXTENSIONS
+    @isStyle    = hasExtension STYLE_EXTENSIONS
+    @isHtml     = hasExtension HTML_EXTENSIONS
+    @isImage    = hasExtension IMAGE_EXTENSIONS
+    @isMarkdown = hasExtension MARKDOWN_EXTENSIONS
 
     # Determine where the file is executed (client/server/shared).
     @domain = executionDomain(@path)
 
-    # Determine if the file type is an server asset.
+    # Determine if the file type is a server asset.
     if @isFile and @domain is SERVER
-      @isAsset = true unless hasExtension(CODE_EXTENSIONS)
+      @isAsset = true if not hasExtension(CODE_EXTENSIONS) and not @isMarkdown
       @isAsset = true if @isPrivate
 
     # Process directives.
@@ -234,7 +241,7 @@ readdir = (dir, deep) ->
 isSupported = (path) ->
   if executionDomain(path) is SERVER
     # All files are supported on the server.
-    # They are set as { isAsset:true } if they are note JS or CSS.
+    # They are set as { isAsset:true } if they are not JS or CSS.
     true unless UNSUPPORTED_EXTENSIONS.any (ext) -> fsPath.extname(path) is ext
   else
     SUPPORTED_EXTENSIONS.any (ext) -> fsPath.extname(path) is ext
@@ -246,7 +253,6 @@ toOrderedFiles = (paths, options = {}) ->
   paths = paths.filter (path) -> not fsPath.extname(path).isBlank() # Remove folder-only paths.
   files = paths.map (path) -> new File(path, options)
   files = files.filter (file) -> not file.isExclude and file.isValid
-
 
   # Partition paths into their execution domains.
   byDomain = (domain) -> files.filter (file) -> file.domain is domain

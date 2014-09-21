@@ -14,9 +14,9 @@ pkg     = require './package'
 ###
 Initialize the command-line program.
 ###
-pkg = JSON.parse(fs.readFileSync(fsPath.resolve(__dirname, '../package.json')))
+packageJson = JSON.parse(fs.readFileSync(fsPath.resolve(__dirname, '../package.json')))
 program
-  .version(pkg.version)
+  .version(packageJson.version)
 
 
 

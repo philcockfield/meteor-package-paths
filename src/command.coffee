@@ -12,6 +12,15 @@ pkg     = require './package'
 
 
 ###
+Initialize the command-line program.
+###
+pkg = JSON.parse(fs.readFileSync(fsPath.resolve(__dirname, '../package.json')))
+program
+  .version(pkg.version)
+
+
+
+###
 Pretty prints a set of files.
 ###
 print = (files, trimStart) ->
@@ -42,6 +51,7 @@ program
     console.log ''
     console.log 'Tree:'.red, dir.grey
     print(api.tree(dir), dir)
+
 
 program
   .command('directory')

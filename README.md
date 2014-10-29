@@ -1,4 +1,4 @@
-# Meteor Package Loader
+# Meteor Package Paths
 Manages file paths for Meteor packages.
 
 File inclusion is handled automatically by Meteor for `apps`. Unfortunately this is not so for packages

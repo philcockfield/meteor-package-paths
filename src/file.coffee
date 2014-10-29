@@ -94,12 +94,12 @@ module.exports = class File
   @returns string of javascript code.
   ###
   toAddFilesJavascript: (packageDir, options = {}) ->
-    prefixPath = options.prefixPath ? ''
+    pathPrefix = options.pathPrefix ? ''
     isCamelCase = options.isCamelCase ? true
 
     path = @path
     path = path.remove(new RegExp("^#{ packageDir }/"))
-    path = "#{ prefixPath }#{ path }"
+    path = "#{ pathPrefix }#{ path }"
 
     formatWhere = (where) ->
         where = [where] unless Object.isArray(where)

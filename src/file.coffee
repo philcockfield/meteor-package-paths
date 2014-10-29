@@ -78,12 +78,25 @@ module.exports = class File
 
 
   ###
-  Generates the "api.add_files" line of JS.
+  Generates the "api.addFiles" line of JS.
+
   @param packageDir: The directory path to the package.
-  @param pathPrefix:  A prefix to prepend the path with.
+  @param pathPrefix:
+  @param options:
+              - pathPrefix:   A prefix to prepend the path with.
+                              Default: none ('').
+
+              - isCamelCase:  Flag indicating if file names are
+                              'addFiles' camel-case style (true) or
+                              'add_files' underscore style (false).
+                              (Default: true)
+
   @returns string of javascript code.
   ###
-  toAddFilesJavascript: (packageDir, prefixPath = '') ->
+  toAddFilesJavascript: (packageDir, options = {}) ->
+    prefixPath = options.prefixPath ? ''
+    isCamelCase = options.isCamelCase ? true
+
     path = @path
     path = path.remove(new RegExp("^#{ packageDir }/"))
     path = "#{ prefixPath }#{ path }"
@@ -101,7 +114,8 @@ module.exports = class File
         where = formatWhere(where)
         options = ''
         options = ', { isAsset:true }' if isAsset
-        line = "  api.add_files('#{ path }', #{ where }#{ options });\n"
+        method = if isCamelCase then 'addFiles' else 'add_files'
+        line = "  api.#{ method }('#{ path }', #{ where }#{ options });\n"
 
 
 

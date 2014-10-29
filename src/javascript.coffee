@@ -11,14 +11,25 @@ module.exports =
   the package.js file.
   @param rootDir:     The directory path to the package.
   @param pathPrefix:  A prefix to prepend the path with.
+  @param options:
+              - pathPrefix:   A prefix to prepend the path with.
+                              Default: none ('').
+
+              - isCamelCase:  Flag indicating if file names are
+                              'addFiles' camel-case style (true) or
+                              'add_files' underscore style (false).
+                              (Default: true)
+
   @returns string of javascript code.
   ###
-  addFiles: (rootDir, pathPrefix) ->
+  addFiles: (rootDir, options = {}) ->
     result = ''
+    prefixPath = options.prefixPath ? ''
+    isCamelCase = options.isCamelCase ? true
 
     printFiles = (files, whereParam) ->
       for file in files
-        result += file.toAddFilesJavascript(rootDir, pathPrefix)
+        result += file.toAddFilesJavascript(rootDir, options)
 
     print = (dir) ->
       dir = "#{ rootDir }/#{ dir }"

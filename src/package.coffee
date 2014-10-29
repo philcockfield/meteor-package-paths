@@ -77,11 +77,18 @@ module.exports =
     lines = readFile(packagePath)
     lines = lines.filter (line) ->
                 return false if line.has(/api.add_files/)
+                return false if line.has(/api.addFiles/)
                 return false if line.has(new RegExp(js.GENERATED_HEADER))
                 true
 
+    isCamelCase = lines.any (line) -> line.indexOf('Package.onUse') > -1
+
     lines = filterWithin /Package.on_use/, lines, (line) -> not line.isBlank()
     lines = filterWithin /Package.on_test/, lines, (line) -> not line.isBlank()
+
+    lines = filterWithin /Package.onUse/, lines, (line) -> not line.isBlank()
+    lines = filterWithin /Package.onTest/, lines, (line) -> not line.isBlank()
+
 
     insertLines = (withinFuncRegex, path, prefix) ->
             # Get the insertion point.
@@ -90,17 +97,27 @@ module.exports =
 
             # Insert the "add_files" statements.
             addLine = (text = '') ->
-              lines.add(text, insertAt)
-              insertAt += 1
+                lines.add(text, insertAt)
+                insertAt += 1
 
             addLine()
             addLine("  #{ js.GENERATED_HEADER }")
-            for fileLine in js.addFiles(path, prefix).trim().split('\n')
+
+            files = js.addFiles(path, pathPrefix:prefix, isCamelCase:isCamelCase)
+
+            for fileLine in files.trim().split('\n')
               addLine("  #{ fileLine.trim() }")
             addLine()
 
-    insertLines(/Package.on_use/, dir)
-    insertLines(/Package.on_test/, fsPath.join(dir, 'tests'), 'tests/')
+    switch isCamelCase
+      when true
+        insertLines(/Package.onUse/, dir)
+        insertLines(/Package.onTest/, fsPath.join(dir, 'tests'), 'tests/')
+
+      when false
+        insertLines(/Package.on_use/, dir)
+        insertLines(/Package.on_test/, fsPath.join(dir, 'tests'), 'tests/')
+
 
     # Determine if the resulting package.js is different.
     newPackage = lines.join('\n')

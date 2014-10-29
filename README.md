@@ -39,7 +39,7 @@ To see the available commands, from within your package folder:
     $ package --help
 
 
-To create a fresh `package.js` file with all the correct `api.add_files` entries:
+To create a fresh `package.js` file with all the correct `api.addFiles` entries:
 
     $ cd my-package
     $ package create 'My Package'
@@ -49,7 +49,7 @@ To update an existing `package.js` file:
     $ cd my-package
     $ package update
 
-The resulting `package.js` file will contain the `api.add_files` listing for your package taking into account any
+The resulting `package.js` file will contain the `api.addFiles` listing for your package taking into account any
 sprokets style comment directives you may have within any of the files.
 
 And to update your app's entire set of packages:

@@ -6,64 +6,6 @@ js     = require './javascript'
 
 module.exports =
   ###
-  Creates a new package.js file.
-  @param dir: The directory to create the package within.
-  @param options:
-            - summary:  The summary description of the package.
-            - force:    Flag indicating if the file should be overwritten.
-            - withDirs: Flag indicating if the [client/server/shared] directories should be created.
-  @returns true if the package file was created, otherwise false.
-  ###
-  create: (dir, options = {}) ->
-    # Setup initial conditions.
-    summary   = options.summary ? ''
-    force     = options.force is true
-    withDirs  = options.withDirs is true
-    path      = fsPath.join(dir, 'package.js')
-    return false if fs.existsSync(path) and not force
-
-    # Add the [client/server/shared] directories.
-    if withDirs
-      createDir(dir, 'client')
-      createDir(dir, 'server')
-      createDir(dir, 'shared')
-
-
-    # Save the base template.
-    add_files = js.addFiles(dir).trim()
-    tmpl =
-      """
-      Package.describe({
-        summary: '#{ summary }'
-      });
-
-
-
-      Package.on_use(function (api) {
-        api.use('http', ['client', 'server']);
-        api.use('templating', 'client');
-        api.use('coffeescript');
-      });
-
-
-
-      Package.on_test(function (api) {
-        api.use(['tinytest', 'coffeescript']);
-        api.use(['templating', 'ui', 'spacebars'], 'client');
-      });
-
-      """
-    fs.writeFileSync(path, tmpl)
-
-    # Insert the "add_files" block.
-    @update(dir)
-
-    # Finish up.
-    true
-
-
-
-  ###
   Updates the [add_new] statements within the package.js file.
   @param dir: The directory to the package.js file resides within.
   @returns true if the file was updated, or false if the file does not already exist.

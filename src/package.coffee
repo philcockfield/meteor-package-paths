@@ -130,7 +130,8 @@ createDir = (base, name) ->
 
 
 isFunctionEnd = (line) -> line.has /\}\)\;/
-# isFunctionOnUse = (line) -> line.has /Package.on_use/
+
+
 
 filterWithin = (funcStartRegEx, lines, func) ->
   withinFunction = false

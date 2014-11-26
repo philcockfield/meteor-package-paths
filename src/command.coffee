@@ -24,6 +24,7 @@ program
 Pretty prints a set of files.
 ###
 print = (files, trimStart) ->
+  trimStart = fsPath.resolve(trimStart)
   for key, items of files
     if items.length > 0
       console.log " #{ key }:".blue
@@ -47,28 +48,19 @@ program
   .description('Shows the ordered list of files for the entire hierarchy under the given directory (deep)')
   .action (dir, args) ->
     dir = './' unless Object.isString(dir)
-    dir = fsPath.resolve(dir)
     console.log ''
-    console.log 'Tree:'.red, dir.grey
+    console.log 'Tree:'.green, fsPath.resolve(dir).grey
     print(api.tree(dir), dir)
 
-
-program
-  .command('directory')
-  .description('Shows the ordered list of files under the given directory (shallow)')
-  .action (dir, args) ->
-    dir = fsPath.resolve(dir)
-    console.log ''
-    console.log 'Directory:'.red, dir.grey
-    print(api.directory(dir), dir)
 
 
 program
   .command('file')
   .description('Shows the file for the given path')
   .action (path, args) ->
+    console.log 'path', path
     console.log ''
-    console.log 'File:'.red, path.grey
+    console.log 'File:'.green, path.grey
     unless file = api.file(path)
       console.log ' Not found.'.red
     else
@@ -95,7 +87,7 @@ program
     console.log 'package.js'.green, dir.grey
     console.log ''
     console.log "  #{ js.GENERATED_HEADER }".grey
-    console.log js.addFiles(dir).red
+    console.log js.addFiles(dir).cyan
     console.log ''
 
 

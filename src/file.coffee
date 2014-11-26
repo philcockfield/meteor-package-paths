@@ -30,7 +30,12 @@ Represents a single file.
 module.exports = class File
   constructor: (@path, options = {}) ->
     # Setup initial conditions.
+    @relativePath = @path
     @path = fsPath.resolve(@path)
+    @basePath = @path.substring(0, (@path.length - @relativePath.length))
+    @basePath = fsPath.resolve('.') if @basePath.isBlank()
+    @relativePath = @relativePath.substring(@basePath.length, @relativePath.length)
+
     @exists = fs.existsSync(path)
     if @exists
       @isFile = fs.statSync(path).isFile()
@@ -40,7 +45,7 @@ module.exports = class File
     @extension = fsPath.extname(@path)
     @name      = fsPath.basename(@path).remove(new RegExp("#{ @extension }$"))
     @prereqs   = []
-    @isPrivate = @path.indexOf('/private/') isnt -1
+    @isPrivate = @relativePath.indexOf('/private/') isnt -1
 
     # File type flags.
     hasExtension = (extensions) => extensions.any (ext) => ext is @extension
@@ -210,7 +215,8 @@ Generates the ordered list of files for the entire hierarchy under the given dir
 @param options:
           - withPrereqs: (default:true) Flag indicating each files pre-requs collection should be built upon construction.
 ###
-File.tree = (dir, options) -> toOrderedFiles(readdir(dir, true), options)
+File.tree = (dir, options) ->
+  toOrderedFiles(readdir(dir, true), options)
 
 
 ###

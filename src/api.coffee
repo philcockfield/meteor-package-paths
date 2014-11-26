@@ -14,6 +14,7 @@ module.exports = loader =
   ###
   tree: (dir) -> File.tree(dir)
 
+
   ###
   Generates the ordered list of files under the given directory (shallow).
   @param dir: The root directory to retrieve the file listing from.
@@ -27,6 +28,6 @@ module.exports = loader =
   ###
   file: (path) ->
     file = new File(path)
-    file if file.isValid()
+    file if file.isValid
 
 

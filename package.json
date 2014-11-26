@@ -1,6 +1,6 @@
 {
   "name": "meteor-package-paths",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "homepage": "https://github.com/philcockfield/meteor-package-paths",
   "engines": [ "node >=0.8.0" ],
   "description": "Manages file paths for Meteor packages.",

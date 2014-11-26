@@ -22,6 +22,8 @@ SUPPORTED_EXTENSIONS    = [].union(CODE_EXTENSIONS,
                                    MARKDOWN_EXTENSIONS)
 UNSUPPORTED_EXTENSIONS  = [ '.DS_Store' ]
 
+
+
 ###
 Represents a single file.
 ###
@@ -235,8 +237,6 @@ executionDomain = (filePath) ->
     return CLIENT if part is CLIENT
     return SERVER if part is SERVER or part is PRIVATE
     return SHARED if part is SHARED
-    if part is TESTS
-      console.log 'TESTS'
 
   SHARED # No execution domain found - default to 'shared'.
 
@@ -256,6 +256,8 @@ readdir = (dir, deep) ->
 
 
 isSupported = (path) ->
+  return false if path.indexOf('.build') >= 0
+
   if executionDomain(path) is SERVER
     # All files are supported on the server.
     # They are set as { isAsset:true } if they are not JS or CSS.

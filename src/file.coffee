@@ -59,7 +59,7 @@ module.exports = class File
     if @isMarkdown
       @domain = SERVER # Force markdown to the server.
     else
-      @domain = executionDomain(@path)
+      @domain = executionDomain(@relativePath)
 
     # Determine if the file type is a server asset.
     if @isFile and @domain is SERVER

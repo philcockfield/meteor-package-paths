@@ -1,7 +1,7 @@
 fs     = require 'fs'
 fsPath = require 'path'
 wrench = require 'wrench'
-js     = require './javascript'
+js     = require './js'
 
 
 module.exports =

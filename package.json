@@ -1,25 +1,24 @@
 {
   "name": "meteor-package-paths",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "homepage": "https://github.com/philcockfield/meteor-package-paths",
-  "engines": [ "node >=0.10.33" ],
+  "engines": [
+    "node >=0.10.33"
+  ],
   "description": "Manages file paths for Meteor packages.",
   "author": "Phil Cockfield (https://github.com/philcockfield)",
-  "dependencies":
-  {
+  "dependencies": {
     "coffee-script": ">=1.8.0",
     "sugar": "1.4.1",
     "colors": "0.6.0-1",
     "wrench": "1.5.1",
     "commander": ">= 2.3.0"
   },
-  "repository":
-  {
+  "repository": {
     "type": "git",
     "url": "https://github.com/philcockfield/meteor-package-paths.git"
   },
-  "bin":
-  {
+  "bin": {
     "package": "./bin/command.js"
   }
 }

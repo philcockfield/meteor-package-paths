@@ -36,9 +36,9 @@ module.exports = class File
     @basePath = fsPath.resolve('.') if @basePath.isBlank()
     @relativePath = @relativePath.substring(@basePath.length, @relativePath.length)
 
-    @exists = fs.existsSync(path)
+    @exists = fs.existsSync(@path)
     if @exists
-      @isFile = fs.statSync(path).isFile()
+      @isFile = fs.statSync(@path).isFile()
 
     # Store values.
     @dir       = fsPath.dirname(@path)

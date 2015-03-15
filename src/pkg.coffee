@@ -152,6 +152,3 @@ getInsertionPoint = (funcStartRegEx, lines) ->
     if withinFunction
       return i if isFunctionEnd(line)
   -1 # Not found.
-
-
-

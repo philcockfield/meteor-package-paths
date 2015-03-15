@@ -9,7 +9,7 @@ SHARED    = 'shared'
 PRIVATE   = 'private'
 TESTS     = 'tests'
 
-CODE_EXTENSIONS         = ['.js', '.coffee']
+CODE_EXTENSIONS         = ['.js', '.coffee', '.jsx', '.cjsx']
 STYLE_EXTENSIONS        = ['.css', '.styl']
 HTML_EXTENSIONS         = ['.html', '.htm']
 IMAGE_EXTENSIONS        = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.swf']
@@ -367,7 +367,3 @@ putMainLast = (files) ->
   files = files.filter (file) -> file.name isnt 'main'
   files.add(mainFiles)
   files
-
-
-
-

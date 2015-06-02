@@ -10,7 +10,7 @@ PRIVATE   = 'private'
 TESTS     = 'tests'
 
 CODE_EXTENSIONS         = ['.js', '.coffee', '.jsx', '.cjsx']
-STYLE_EXTENSIONS        = ['.css', '.styl']
+STYLE_EXTENSIONS        = ['.css', '.styl', '.less']
 HTML_EXTENSIONS         = ['.html', '.htm']
 IMAGE_EXTENSIONS        = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.swf']
 MARKDOWN_EXTENSIONS     = ['.md', '.MD', '.markdown']

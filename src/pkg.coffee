@@ -46,8 +46,6 @@ module.exports =
                 lines.add(text, insertAt)
                 insertAt += 1
 
-            console.log 'lines.length', lines.length
-
             addLine()
             addLine("  #{ js.GENERATED_HEADER }") if lines.length > 0
 

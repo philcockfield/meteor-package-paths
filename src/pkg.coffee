@@ -18,6 +18,10 @@ module.exports =
     # Get the package.js file as an array with all the [add_files] lines removed.
     lines = readFile(packagePath)
     lines = lines.filter (line) ->
+
+                return true if line.has(/api.addFiles\('build\//)
+                return true if line.has(/api.add_files\('build\//)
+
                 return false if line.has(/api.add_files/)
                 return false if line.has(/api.addFiles/)
                 return false if line.has(new RegExp(js.GENERATED_HEADER))
@@ -42,8 +46,10 @@ module.exports =
                 lines.add(text, insertAt)
                 insertAt += 1
 
+            console.log 'lines.length', lines.length
+
             addLine()
-            addLine("  #{ js.GENERATED_HEADER }")
+            addLine("  #{ js.GENERATED_HEADER }") if lines.length > 0
 
             files = js.addFiles(path, pathPrefix:prefix, isCamelCase:isCamelCase)
 
